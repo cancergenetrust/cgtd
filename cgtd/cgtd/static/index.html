@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cancer Gene Trust</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+      integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="style.css">
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+<script src="uploadr.js"></script>
+</head>
+<body>
+<div class="container">
+<img class="center-block" src="banner.jpg" />
+<h1 class="text-info">Cancer Gene Trust</h1>
+
+<form id="upload-form" action="submissions" method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" class="form-control" id="name" name="name" placeholder="Jane Doe">
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" class="form-control" id="email" name="email" placeholder="jdoe@ucsc.edu">
+    </div>
+
+    <div class="form-group">
+      <label for="institution">Institution</label>
+      <input type="text" class="form-control" id="institution" name="institution"  placeholder="UCSC">
+    </div>
+
+    <strong>Files</strong><br>
+    <input id="file-picker" type="file" name="file" multiple><p>
+
+    <div id="dropbox">
+        Drag and Drop Files Here
+    </div><br/>
+
+    <fieldset id="progress" style="display: none">
+        <legend>Progress</legend>
+        <div class="progress-trough">
+            <div id="progress-bar" class="progress-bar">0%</div>
+        </div><br/>
+    </fieldset>
+
+    <button type="submit" class="btn btn-default" id="upload-button">Submit</button>
+</form>
+
+</div>
+</body>
+</html>
