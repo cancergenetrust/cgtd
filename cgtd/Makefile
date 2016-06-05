@@ -1,6 +1,7 @@
 init:
-	mkdir -p data
-	sudo chmod 777 data
+	mkdir -p data/ipfs/export
+	mkdir -p data/ipfs/data
+	sudo chmod -R 777 data
 
 clean:
 	sudo rm -rf data/*
