@@ -30,3 +30,11 @@ def test_submit(server):
     assert r.status_code == 200
     submission = json.loads(r.text)
     assert submission['hash'] == "QmdVHEqXPnFU7acXvsmtoWuxaHtBGhiah9axDUm9BfdVmn"
+
+
+def test_get_submissions(server):
+    r = requests.get(url_for(server, "submissions"))
+    assert(r.status_code == requests.codes.ok)
+    submissions = json.loads(r.text)["submissions"]
+    assert(len(submissions) > 0)
+    assert("QmdVHEqXPnFU7acXvsmtoWuxaHtBGhiah9axDUm9BfdVmn" in submissions)

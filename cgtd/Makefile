@@ -1,14 +1,12 @@
-init:
-	mkdir -p data/ipfs/export
-	mkdir -p data/ipfs/data
-	sudo chmod -R 777 data
-
-clean:
-	sudo rm -rf data/*
-
 stop:
 	docker stop cgtd || true && docker rm cgtd || true
 	docker stop ipfs || true && docker rm ipfs || true
+
+clean:
+	sudo rm -rf data/*
+	mkdir -p data/ipfs/export
+	mkdir -p data/ipfs/data
+	sudo chmod -R 777 data
 
 ipfs:
 	mkdir -p data/ipfs/export
@@ -22,6 +20,10 @@ ipfs:
 		ipfs/go-ipfs:latest
 	sleep 10
 	docker exec ipfs ipfs config Datastore.StorageMax "512MB"
+
+init:
+	# Initialize the ipns reference to a submission list - run AFTER ipfs is up
+	docker exec ipfs sh -c "echo '{\"submissions\": []}' | ipfs add -q | ipfs name publish"
 
 build:
 	docker build -t cgtd .
