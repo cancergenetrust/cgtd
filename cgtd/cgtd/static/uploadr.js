@@ -87,8 +87,9 @@ function doUpload() {
                 return;
             }
             else {
-                window.location = "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&hgt.customText="
-                   + "http://ipfs.io/ipfs/" + data.submission.files[0].hash;
+                window.location.href = "/submission.html?path=/ipfs/" + data.hash;
+                // window.location = "http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&hgt.customText="
+                //    + "http://ipfs.io/ipfs/" + data.submission.files[0].hash;
                 // window.location = window.location.protocol + "//" + window.location.hostname
                 //     + ":8080/ipfs/" + data.submission.files[0].hash;
             }

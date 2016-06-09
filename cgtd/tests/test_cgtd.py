@@ -29,7 +29,7 @@ def test_submit(server):
                       data={"a_key": "a_value"})
     assert r.status_code == 200
     submission = json.loads(r.text)
-    assert submission['hash'] == "QmdVHEqXPnFU7acXvsmtoWuxaHtBGhiah9axDUm9BfdVmn"
+    assert submission['hash'] == "QmatYo1uZom1oEALfuwNvNay5rSdA74KnM6ZGH61Nckfcz"
 
 
 def test_get_submissions(server):

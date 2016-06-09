@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Submission</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+      integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="style.css">
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+<script src="underscore-min.js"></script>
+</head>
+<body>
+<div class="container">
+<img class="center-block" src="banner.jpg" />
+<h1 class="text-info">CGT Submission</h1>
+
+<div id="files-list">
+</div>
+
+</div>
+</body>
+<script type="text/html" id="files-list-template">
+<% _.each(files, function(file) { %>
+		<tr>
+				<td><%= file.name %></td>
+		</tr>
+<% }) %>
+</script>
+<script>
+var filesListTemplate = _.template($("#files-list-template").html());
+
+$.getJSON("http://ipfs.io" + location.search.split('path=')[1], function(data) {
+	console.log(data);
+  $("#files-list").html(filesListTemplate({files: data.files}));
+});
+</script>
+
+</html>

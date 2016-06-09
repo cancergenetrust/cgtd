@@ -56,7 +56,8 @@ class SubmissionListAPI(Resource):
 
         Returns the submission manifest and its path in ipfs.
         """
-        submission = {key: value for key, value in request.form.items()}
+        submission = {"meta": {key: value for key, value in
+                               request.form.items()}}
         submission["files"] = [{"name": f.filename, "hash":
                                 g.ipfs.add(f)[1]['Hash']}
                                for f in request.files.getlist("file")]
