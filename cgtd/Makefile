@@ -25,21 +25,6 @@ ipfs:
 eth:
 	docker run --rm -it \
 		-v `pwd`/data/ethereum:/data \
-		-v `pwd`/genesis.json:/genesis.json \
-		ethereum/client-go:latest \
-		--datadir /data \
-		--networkid 93324 \
-		--identity "Cancer Gene Trust" \
-		init /genesis.json
-	docker run --rm -it \
-		-v `pwd`/data/ethereum:/data \
-		-v `pwd`/password.txt:/password.txt \
-		ethereum/client-go:latest \
-		--datadir /data \
-		--password password.txt \
-		account new 
-	docker run --rm -it \
-		-v `pwd`/data/ethereum:/data \
 		-v `pwd`/password.txt:/password.txt \
 		ethereum/client-go:latest \
 		--datadir /data \
@@ -53,6 +38,23 @@ eth:
 init:
 	# Initialize the ipns reference to a submission list - run AFTER ipfs is up
 	docker exec ipfs sh -c "echo '{\"submissions\": []}' | ipfs add -q | ipfs name publish"
+
+	# Initialize a test ethereum chain and account
+	docker run --rm -it \
+		-v `pwd`/data/ethereum:/data \
+		-v `pwd`/genesis.json:/genesis.json \
+		ethereum/client-go:latest \
+		--datadir /data \
+		--networkid 93324 \
+		--identity "Cancer Gene Trust" \
+		init /genesis.json
+	docker run --rm -it \
+		-v `pwd`/data/ethereum:/data \
+		-v `pwd`/password.txt:/password.txt \
+		ethereum/client-go:latest \
+		--datadir /data \
+		--password password.txt \
+		account new 
 
 build:
 	docker build -t cgtd .
