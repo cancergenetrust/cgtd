@@ -6,6 +6,7 @@ clean:
 	sudo rm -rf data/*
 	mkdir -p data/ipfs/export
 	mkdir -p data/ipfs/data
+	mkdir -p data/ethereum
 	sudo chmod -R 777 data
 
 ipfs:
@@ -20,6 +21,34 @@ ipfs:
 		ipfs/go-ipfs:latest
 	sleep 10
 	docker exec ipfs ipfs config Datastore.StorageMax "512MB"
+
+eth:
+	docker run --rm -it \
+		-v `pwd`/data/ethereum:/data \
+		-v `pwd`/genesis.json:/genesis.json \
+		ethereum/client-go:latest \
+		--datadir /data \
+		--networkid 93324 \
+		--identity "Cancer Gene Trust" \
+		init /genesis.json
+	docker run --rm -it \
+		-v `pwd`/data/ethereum:/data \
+		-v `pwd`/password.txt:/password.txt \
+		ethereum/client-go:latest \
+		--datadir /data \
+		--password password.txt \
+		account new 
+	docker run --rm -it \
+		-v `pwd`/data/ethereum:/data \
+		-v `pwd`/password.txt:/password.txt \
+		ethereum/client-go:latest \
+		--datadir /data \
+		--rpc \
+		--ipcapi  "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" \
+		--rpcapi "db,eth,net,web3" \
+	    --nodiscover --maxpeers 0 \
+		--password password.txt \
+		--mine
 
 init:
 	# Initialize the ipns reference to a submission list - run AFTER ipfs is up
