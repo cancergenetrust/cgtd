@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import logging
 import json
+import requests
 import cStringIO
 import ipfsApi
 from flask import Flask, request, jsonify, g
@@ -34,6 +35,18 @@ class IPFSAPI(Resource):
     def get(self):
         """ Return ipfs id. """
         return jsonify(g.ipfs.id())
+
+
+@api.route('/v0/ethereum')
+class EthereumAPI(Resource):
+    def get(self):
+        """ Return ethereum account. """
+        r = requests.post("http://ethereum:8545",
+                          data=json.dumps({"jsonrpc": "2.0",
+                                           "method": "eth_accounts",
+                                           "params": [], "id": 1}))
+        assert r.status_code == 200
+        return r.text
 
 
 @api.route('/v0/submissions')

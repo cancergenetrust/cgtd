@@ -22,23 +22,24 @@ ipfs:
 	sleep 10
 	docker exec ipfs ipfs config Datastore.StorageMax "512MB"
 
-eth:
-	docker run --rm -it \
+ipfs_init:
+	# Initialize the ipns reference to a submission list - run AFTER ipfs is up
+	docker exec ipfs sh -c "echo '{\"submissions\": []}' | ipfs add -q | ipfs name publish"
+
+ethereum:
+	docker run --rm -it --name ethereum \
 		-v `pwd`/data/ethereum:/data \
 		-v `pwd`/password.txt:/password.txt \
 		ethereum/client-go:latest \
 		--datadir /data \
-		--rpc \
+		--rpc --rpcport "8545" --rpcaddr "0.0.0.0" --rpccorsdomain "*" \
 		--ipcapi  "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" \
 		--rpcapi "db,eth,net,web3" \
 	    --nodiscover --maxpeers 0 \
 		--password password.txt \
-		--mine
+		--mine 1
 
-init:
-	# Initialize the ipns reference to a submission list - run AFTER ipfs is up
-	docker exec ipfs sh -c "echo '{\"submissions\": []}' | ipfs add -q | ipfs name publish"
-
+ethereum_init:
 	# Initialize a test ethereum chain and account
 	docker run --rm -it \
 		-v `pwd`/data/ethereum:/data \
@@ -64,6 +65,7 @@ debug:
 	docker run --name cgtd --rm -it \
 		-v `pwd`:/app:ro \
 		--link ipfs:ipfs \
+		--link ethereum:ethereum \
 		-p 5000:5000 \
 		cgtd python cgtd/cgtd.py
 

@@ -29,7 +29,7 @@ def test_submit(server):
                       data={"a_key": "a_value"})
     assert r.status_code == 200
     submission = json.loads(r.text)
-    assert submission['path'] == "/ipfs/QmXc65DSB5BPcVdn5PAyEwzu8hDQYuNMEsZr3AJYtrmUjW"
+    assert submission['path'] == "/ipfs/QmQH59c9hfsb8rBjQ89tS9jRfzJ3GfbCsb319h4ANaq5bh"
 
 
 def test_get_submissions(server):
@@ -37,4 +37,4 @@ def test_get_submissions(server):
     assert(r.status_code == requests.codes.ok)
     submissions = json.loads(r.text)["submissions"]
     assert(len(submissions) > 0)
-    assert("QmdVHEqXPnFU7acXvsmtoWuxaHtBGhiah9axDUm9BfdVmn" in submissions)
+    assert("/ipfs/QmQH59c9hfsb8rBjQ89tS9jRfzJ3GfbCsb319h4ANaq5bh" in submissions)
