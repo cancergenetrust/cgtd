@@ -51,33 +51,33 @@ class SubmissionListAPI(Resource):
         Add posted files and json manifest to ipfs.
 
         Add all posted files to ipfs along with a json manifest file which
-        includes the ipfs hash for each file as well as any form fields.
+        includes the ipfs path for each file as well as any form fields.
         Also update the list of submissions and re-publish via ipns.
 
         Returns the submission manifest and its path in ipfs.
         """
-        submission = {"meta": {key: value for key, value in
+        manifest = {"fields": {key: value for key, value in
                                request.form.items()}}
-        submission["files"] = [{"name": f.filename, "hash":
-                                g.ipfs.add(f)[1]['Hash']}
-                               for f in request.files.getlist("file")]
-        logging.debug("Submission:".format(submission))
-        submission_hash = g.ipfs.add(
-            cStringIO.StringIO(json.dumps(submission)))[1]['Hash']
-        logging.info("Submitted: {}".format(submission_hash))
+        manifest["files"] = [{"name": f.filename, "path":
+                              "/ipfs/{}".format(g.ipfs.add(f)[1]['Hash'])}
+                             for f in request.files.getlist("file")]
+        logging.debug("Manifest:".format(manifest))
+        path = "/ipfs/{}".format(
+            g.ipfs.add(cStringIO.StringIO(json.dumps(manifest)))[1]['Hash'])
+        logging.info("Path: {}".format(path))
 
         # Update steward submissions list and publish to ipns
         steward = json.loads(g.ipfs.cat(g.ipfs.name_resolve()["Path"]))
-        if submission_hash not in steward["submissions"]:
-            steward["submissions"].append(submission_hash)
-            steward_hash = g.ipfs.add(
+        if path not in steward["submissions"]:
+            steward["submissions"].append(path)
+            steward_path = g.ipfs.add(
                 cStringIO.StringIO(json.dumps(steward)))[1]['Hash']
-            g.ipfs.name_publish(steward_hash)
-            logging.debug("{} added to submissions list".format(submission_hash))
+            g.ipfs.name_publish(steward_path)
+            logging.debug("{} added to submissions list".format(path))
         else:
-            logging.debug("{} already in submissions list".format(submission_hash))
+            logging.debug("{} already in submissions list".format(path))
 
-        return jsonify(hash=submission_hash, submission=submission)
+        return jsonify(path=path, manifest=manifest)
 
 
 if __name__ == "__main__":
