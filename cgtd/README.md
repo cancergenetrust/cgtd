@@ -1,29 +1,21 @@
 # Cancer Gene Trust Daemon (Prototype)
 
-A prototype Flask based web server with a RESTful API 
-and simple drag and drop web page to submit files
-to the ipfs based CGT database.
+A prototype Flask based web server allowing simple
+drag and drop submission to ipfs and Ethereum.
 
-# Running
+# Build, Debug and Test Locally
 
-Start a cgtd container linked to a local ipfs container:
+Start an ipfs and test Ethereum chain locally in containers:
 
-	docker run -d --name ipfs ipfs/go-ipfs:latest
-	docker run -d --name cgtd --link ipfs:ipfs -p 5000:5000 robcurrie/cgtd:latest
+    make stop init ipfs ethereum
+
+Build and start a cgtd container linked to the preceding containers:
+
+    make build debug
 
 Web submission form at [http://localhost:5000]
 
 RESTful API doc at [http://localhost:5000]
-
-# Build, Debug and Test
-
-Start an ipfs node in a container:
-
-    make stop clean init ipfs
-
-Build and start a cgtd container linked to an ipfs container.
-
-    make build debug
 
 Note: make debug runs the cgtd daemon out of the current
 directory with auto-reload so you can edit, test, and debug
@@ -34,4 +26,17 @@ Run pytest inside of the running cgtd container:
     make test
 
 Note: Run in another terminal from the above make debug
+
+# Running
+
+Start a cgtd container linked to a local ipfs container:
+
+    docker run -d --name ipfs ipfs/go-ipfs:latest
+    docker run -d --name ethereum ethereum/client-go:latest
+    docker run -d --name cgtd --link ipfs:ipfs -p 5000:5000 robcurrie/cgtd:latest
+
+Note: You'll need to do some configuration on the ethereum container
+depending on which block chain you want to use. See Makefile for some
+examples.
+
 
