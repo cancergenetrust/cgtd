@@ -9,7 +9,7 @@ or combinations of variants in this global resource that are associated with
 specific clinical features of interest may then contact the data stewards 
 for those participants.
 
-The initial prototype implimentation leverages [IPFS](https://ipfs.io/) for 
+The initial prototype implementation leverages [IPFS](https://ipfs.io/) for 
 decentralized storage and distribution, and [Ethereum](https://www.ethereum.org/) for 
 authentication, authorization, and accounting.
 
