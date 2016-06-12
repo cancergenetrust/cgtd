@@ -12,7 +12,7 @@ clean:
 ipfs:
 	mkdir -p data/ipfs/export
 	mkdir -p data/ipfs/data
-	docker pull ipfs/go-ipfs:latest
+	# docker pull ipfs/go-ipfs:latest
 	docker run -d --name ipfs \
 		-v `pwd`/data/ipfs/export:/export \
 		-v `pwd`/data/ipfs/data:/data/ipfs \
@@ -26,36 +26,46 @@ ipfs_init:
 	# Initialize the ipns reference to a submission list - run AFTER ipfs is up
 	docker exec ipfs sh -c "echo '{\"submissions\": []}' | ipfs add -q | ipfs name publish"
 
+testnet:
+	# Start up geth connected to the test network
+	docker run --rm -it --name ethereum \
+		-v `pwd`/data/ethereum:/data \
+		-v ~/.cgtpassword:/password.txt \
+		-p 8545:8545 \
+		ethereum/client-go:latest \
+		--datadir /data \
+		--password /password.txt \
+		--rpc --rpcport 8545 --rpcaddr "0.0.0.0" --rpccorsdomain "*" \
+		--testnet
+
+ethereum_init:
+	# Initialize an isolated test dev node and account
+	sudo rm -rf data/ethereum/*
+	docker run --rm -it \
+		-v `pwd`/data/ethereum:/data \
+		-v `pwd`/password.txt:/password.txt \
+		ethereum/client-go:latest \
+		--dev \
+		--datadir /data \
+		--password password.txt \
+		account new
+
 ethereum:
+	# Start isolated test dev node and start mining
+	# Note static solc generated from https://github.com/rainbeam/solidity-static
 	docker run --rm -it --name ethereum \
 		-v `pwd`/data/ethereum:/data \
 		-v `pwd`/password.txt:/password.txt \
+		-v `pwd`/solc:/usr/local/bin/solc \
 		ethereum/client-go:latest \
+		--rpc --rpcport 8545 --rpcaddr "0.0.0.0" --rpccorsdomain "*" \
 		--datadir /data \
-		--rpc --rpcport "8545" --rpcaddr "0.0.0.0" --rpccorsdomain "*" \
-		--ipcapi  "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" \
-		--rpcapi "db,eth,net,web3" \
-	    --nodiscover --maxpeers 0 \
-		--password password.txt \
+		--dev --nat none --nodiscover --maxpeers 0 \
+		--verbosity 6 --pprof --pprofport 6110 \
+		--password /password.txt \
+		--unlock 0 \
+		--lightkdf \
 		--mine 1
-
-ethereum_init:
-	# Initialize a test ethereum chain and account
-	docker run --rm -it \
-		-v `pwd`/data/ethereum:/data \
-		-v `pwd`/genesis.json:/genesis.json \
-		ethereum/client-go:latest \
-		--datadir /data \
-		--networkid 93324 \
-		--identity "Cancer Gene Trust" \
-		init /genesis.json
-	docker run --rm -it \
-		-v `pwd`/data/ethereum:/data \
-		-v `pwd`/password.txt:/password.txt \
-		ethereum/client-go:latest \
-		--datadir /data \
-		--password password.txt \
-		account new 
 
 build:
 	docker build -t cgtd .
@@ -88,6 +98,10 @@ run:
 
 shell:
 	docker exec -it cgtd /bin/sh
+
+compile:
+	# Compile and submit contract to test ethereum
+	docker exec cgtd python compile.py
 
 update_requirements:
 	docker exec cgtd pip freeze > requirements.txt
