@@ -19,6 +19,13 @@ def test_ipfs(server):
     assert "Addresses" in ipfs
 
 
+def test_ethereum(server):
+    r = requests.get(url_for(server, "ethereum"))
+    assert(r.status_code == requests.codes.ok)
+    ethereum = json.loads(r.text)
+    assert "accounts" in ethereum
+
+
 def test_submit(server):
     r = requests.post(url_for(server, "submissions"),
                       files=[

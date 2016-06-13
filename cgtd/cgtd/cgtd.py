@@ -10,6 +10,14 @@ from flask_restplus import Api, Resource
 app = Flask(__name__, static_url_path="")
 logging.basicConfig(level=logging.DEBUG)
 
+with open("VarStore.json", "r") as f:
+    eth = EthJsonRpc("ethereum", 8545)
+    contract = json.loads(f.read())
+    # REMIND: Move this into the compile step external to the server
+    contract["address"] = eth.get_contract_address(contract["transaction"])
+    logging.debug("Contract at {}".format(contract["address"]))
+    eth_filter = eth.eth_newFilter(from_block=0, address=contract["address"])
+
 
 @app.before_request
 def connect_to_ipfs():
@@ -42,7 +50,8 @@ class IPFSAPI(Resource):
 class EthereumAPI(Resource):
     def get(self):
         """ Return ethereum account. """
-        return jsonify(accounts=g.eth.eth_accounts())
+        return jsonify(accounts=g.eth.eth_accounts(),
+                       coinbase=g.eth.eth_coinbase())
 
 
 @api.route("/v0/submissions")
@@ -73,6 +82,16 @@ class SubmissionListAPI(Resource):
         path = "/ipfs/{}".format(
             g.ipfs.add(cStringIO.StringIO(json.dumps(manifest)))[1]["Hash"])
         logging.info("Path: {}".format(path))
+
+        logging.debug("Adding to Ethereum block chain")
+        transaction = g.eth.call_with_transaction(g.eth.eth_coinbase(),
+                                                  contract["address"],
+                                                  'saveVar(bytes)', [path])
+        logging.debug("Transaction: {}".format(transaction))
+        logging.debug("Transaction on blockchain: {}".format(g.eth.eth_getTransactionByHash(transaction)))
+
+        print "eth_getFilterChanges", g.eth.eth_getFilterChanges(eth_filter)
+        print "eth_getFilterLogs", g.eth.eth_getFilterLogs(eth_filter)
 
         # Update steward submissions list and publish to ipns
         # steward = json.loads(g.ipfs.cat(g.ipfs.name_resolve()["Path"]))
