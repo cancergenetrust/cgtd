@@ -61,8 +61,20 @@ class SubmissionListAPI(Resource):
         """
         Get a list of all submissions from this steward
         """
-        steward = json.loads(g.ipfs.cat(g.ipfs.name_resolve()["Path"]))
-        return jsonify(submissions=steward["submissions"])
+        # steward = json.loads(g.ipfs.cat(g.ipfs.name_resolve()["Path"]))
+        # return jsonify(submissions=steward["submissions"])
+        # print "eth_getFilterChanges", g.eth.eth_getFilterChanges(eth_filter)
+        transactions = g.eth.eth_getFilterLogs(eth_filter)
+        submissions = [t['data'][194:-24].decode("hex") for t in transactions]
+
+        # l = submissions[0]['data']
+        # l = l.strip().strip("0x")
+        # fromAddr = l[:40].lstrip("00")
+        # fileHash = l[137:].strip("00")
+        # hashStr = fileHash.decode("hex")
+        # print fromAddr, fileHash
+        # print hashStr
+        return jsonify(submissions=submissions)
 
     def post(self):
         """
@@ -89,9 +101,6 @@ class SubmissionListAPI(Resource):
                                                   'saveVar(bytes)', [path])
         logging.debug("Transaction: {}".format(transaction))
         logging.debug("Transaction on blockchain: {}".format(g.eth.eth_getTransactionByHash(transaction)))
-
-        print "eth_getFilterChanges", g.eth.eth_getFilterChanges(eth_filter)
-        print "eth_getFilterLogs", g.eth.eth_getFilterLogs(eth_filter)
 
         # Update steward submissions list and publish to ipns
         # steward = json.loads(g.ipfs.cat(g.ipfs.name_resolve()["Path"]))
