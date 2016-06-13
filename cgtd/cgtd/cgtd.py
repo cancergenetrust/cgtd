@@ -59,21 +59,42 @@ class SubmissionListAPI(Resource):
 
     def get(self):
         """
-        Get a list of all submissions from this steward
+        Get a list of all submissions by account
+
+        Returns a dict of path lists by steward account:
+            {account: [ipfs path, ipfs path], account...}
+
+        Note: This uses an Ethereum filter and therefore recent
+        submissions may not show up until sufficient mining has
+        occurred.
+
+        REMIND: Should lazily update the ipns list for the steward
+        so that apps don't have to mine the Ethereum block chain
+        to get a full list but rather do a simple $.getJSON()
         """
+        # Older ipns storage for full list of submissions
         # steward = json.loads(g.ipfs.cat(g.ipfs.name_resolve()["Path"]))
         # return jsonify(submissions=steward["submissions"])
-        # print "eth_getFilterChanges", g.eth.eth_getFilterChanges(eth_filter)
-        transactions = g.eth.eth_getFilterLogs(eth_filter)
-        submissions = [t['data'][194:-24].decode("hex") for t in transactions]
 
-        # l = submissions[0]['data']
-        # l = l.strip().strip("0x")
-        # fromAddr = l[:40].lstrip("00")
-        # fileHash = l[137:].strip("00")
-        # hashStr = fileHash.decode("hex")
-        # print fromAddr, fileHash
-        # print hashStr
+        # Update steward submissions list and publish to ipns
+        # steward = json.loads(g.ipfs.cat(g.ipfs.name_resolve()["Path"]))
+        # if path not in steward["submissions"]:
+        #     steward["submissions"].append(path)
+        #     steward_path = g.ipfs.add(
+        #         cStringIO.StringIO(json.dumps(steward)))[1]["Hash"]
+        #     g.ipfs.name_publish(steward_path)
+        #     logging.debug("{} added to submissions list".format(path))
+        # else:
+        #     logging.debug("{} already in submissions list".format(path))
+
+        # Get a list of all transactions and de-dupe via set()
+        transactions = set((t['data'][26:66], t['data'][194:-24].decode("hex"))
+                           for t in g.eth.eth_getFilterLogs(eth_filter))
+
+        # Create a dict of account: [list of pathes to submissions]
+        submissions = {}
+        for account, path in transactions:
+            submissions.setdefault(account, []).append(path)
         return jsonify(submissions=submissions)
 
     def post(self):
@@ -101,17 +122,6 @@ class SubmissionListAPI(Resource):
                                                   'saveVar(bytes)', [path])
         logging.debug("Transaction: {}".format(transaction))
         logging.debug("Transaction on blockchain: {}".format(g.eth.eth_getTransactionByHash(transaction)))
-
-        # Update steward submissions list and publish to ipns
-        # steward = json.loads(g.ipfs.cat(g.ipfs.name_resolve()["Path"]))
-        # if path not in steward["submissions"]:
-        #     steward["submissions"].append(path)
-        #     steward_path = g.ipfs.add(
-        #         cStringIO.StringIO(json.dumps(steward)))[1]["Hash"]
-        #     g.ipfs.name_publish(steward_path)
-        #     logging.debug("{} added to submissions list".format(path))
-        # else:
-        #     logging.debug("{} already in submissions list".format(path))
 
         return jsonify(path=path, manifest=manifest)
 
