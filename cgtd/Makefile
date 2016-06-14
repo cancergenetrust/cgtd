@@ -33,6 +33,8 @@ ipfs:
 ethereum:
 	# Start isolated test dev node and start mining
 	# Note static solc generated from https://github.com/rainbeam/solidity-static
+	# REMIND: Use common local and testnet accounts as per:
+	# http://stackoverflow.com/questions/33826018/in-ethereum-what-is-a-private-testnet-why-would-i-want-it-and-how-do-i-set-it
 	docker run -d --name ethereum \
 		-v `pwd`/data/ethereum:/data \
 		-v `pwd`/password.txt:/password.txt \

@@ -29,10 +29,10 @@ def test_ethereum(server):
 def test_submit(server):
     r = requests.post(url_for(server, "submissions"),
                       files=[
-                          ("file", ("ALL-US__TARGET-10-PAIXPH-03A-01D.vcf",
-                                    open("tests/ALL/ALL-US__TARGET-10-PAIXPH-03A-01D.vcf", "rb"))),
-                          ("file", ("ALL-US__TARGET-10-PAKHZT-03A-01R.vcf",
-                                    open("tests/ALL/ALL-US__TARGET-10-PAKHZT-03A-01R.vcf", "rb")))],
+                          ("files[]", ("ALL-US__TARGET-10-PAIXPH-03A-01D.vcf",
+                                       open("tests/ALL/ALL-US__TARGET-10-PAIXPH-03A-01D.vcf", "rb"))),
+                          ("files[]", ("ALL-US__TARGET-10-PAKHZT-03A-01R.vcf",
+                                       open("tests/ALL/ALL-US__TARGET-10-PAKHZT-03A-01R.vcf", "rb")))],
                       data={"a_key": "a_value"})
     assert r.status_code == 200
     submission = json.loads(r.text)

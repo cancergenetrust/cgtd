@@ -48,7 +48,7 @@ function doUpload() {
     // Attach the files.
     for (var i = 0, ie = PENDING_FILES.length; i < ie; i++) {
         // Collect the other form data.
-        fd.append("file", PENDING_FILES[i]);
+        fd.append("files[]", PENDING_FILES[i]);
     }
 
     // Inform the back-end that we're doing this over ajax.

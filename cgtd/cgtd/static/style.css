@@ -8,6 +8,7 @@ body {
 #dropbox {
     border: 2px dashed #000000;
     padding: 20px;
+text-align: center;
 }
 
 #dropbox.active {

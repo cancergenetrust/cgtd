@@ -59,63 +59,46 @@ class SubmissionListAPI(Resource):
 
     def get(self):
         """
-        Get a list of all submissions by account
+        Get a list of all submissions
 
-        Returns a dict of path lists by steward account:
-            {account: [ipfs path, ipfs path], account...}
+        Returns all transactions including account and transaction
+        information from the ethereum blockchain.
 
-        Note: This uses an Ethereum filter and therefore recent
-        submissions may not show up until sufficient mining has
-        occurred.
-
-        REMIND: Should lazily update the ipns list for the steward
-        so that apps don't have to mine the Ethereum block chain
-        to get a full list but rather do a simple $.getJSON()
+        Note: DApps should use the ipns list updated below in put
+        for browsing.
         """
-        # Older ipns storage for full list of submissions
-        # steward = json.loads(g.ipfs.cat(g.ipfs.name_resolve()["Path"]))
-        # return jsonify(submissions=steward["submissions"])
-
-        # Update steward submissions list and publish to ipns
-        # steward = json.loads(g.ipfs.cat(g.ipfs.name_resolve()["Path"]))
-        # if path not in steward["submissions"]:
-        #     steward["submissions"].append(path)
-        #     steward_path = g.ipfs.add(
-        #         cStringIO.StringIO(json.dumps(steward)))[1]["Hash"]
-        #     g.ipfs.name_publish(steward_path)
-        #     logging.debug("{} added to submissions list".format(path))
-        # else:
-        #     logging.debug("{} already in submissions list".format(path))
-
-        # Get a list of all transactions and de-dupe via set()
-        transactions = set((t['data'][26:66], t['data'][194:-24].decode("hex"))
-                           for t in g.eth.eth_getFilterLogs(eth_filter))
-
-        # Create a dict of account: [list of pathes to submissions]
-        submissions = {}
-        for account, path in transactions:
-            submissions.setdefault(account, []).append(path)
+        submissions = [{"transaction": t['transactionHash'],
+                        "account": t['data'][26:66],
+                        "path": t['data'][194:-24].decode("hex")}
+                       for t in g.eth.eth_getFilterLogs(eth_filter)]
         return jsonify(submissions=submissions)
 
     def post(self):
         """
-        Add posted files and json manifest to ipfs.
+        Add posted files and json manifest to ipfs and ethereum.
 
         Add all posted files to ipfs along with a json manifest file which
         includes the ipfs path for each file as well as any form fields.
 
-        Returns the submission manifest and its path in ipfs.
+        Then sends a transaction to an ethereum contract referencing
+        the ipfs path of the manifest so that the entire list of
+        submissions can be assembled via an ethereum event filter.
+
+        Returns the submission manifest, its path in ipfs and
+        the ethereum transaction hash.
         """
         manifest = {"fields": {key: value for key, value in
                                request.form.items()}}
         manifest["files"] = [{"name": f.filename, "path":
                               "/ipfs/{}".format(g.ipfs.add(f)[1]["Hash"])}
-                             for f in request.files.getlist("file")]
+                             for f in request.files.getlist("files[]")]
         logging.debug("Manifest:".format(manifest))
         path = "/ipfs/{}".format(
             g.ipfs.add(cStringIO.StringIO(json.dumps(manifest)))[1]["Hash"])
         logging.info("Path: {}".format(path))
 
+        # REMIND: Should see if path already in ipfs or transaction
+        # referencing already in block chain to avoid duplicate transactions
         logging.debug("Adding to Ethereum block chain")
         transaction = g.eth.call_with_transaction(g.eth.eth_coinbase(),
                                                   contract["address"],
@@ -123,8 +106,37 @@ class SubmissionListAPI(Resource):
         logging.debug("Transaction: {}".format(transaction))
         logging.debug("Transaction on blockchain: {}".format(g.eth.eth_getTransactionByHash(transaction)))
 
-        return jsonify(path=path, manifest=manifest)
+        # NOTE: Catch 22 here in that we can't add the transaction hash
+        # to the manifest as that would change the ipfs address of the
+        # manifest...
 
+        return jsonify(path=path, manifest=manifest, transaction=transaction)
+
+    def put(self):
+        """
+        Update the ipns list of submissions.
+
+        Collect all submission hashes from the ethereum event log, de-dupe,
+        and publish to ipns for easy consumption by DApps.
+
+        This uses an Ethereum filter and therefore recent
+        submissions may not show up until sufficient mining has
+        occurred.
+
+        Note that the ipns update is relatively slow (multiple seconds)
+        and therefore this should be called after multiple submissions
+        have been made vs. per submission.
+        """
+        transactions = [(t['transactionHash'], t['data'][26:66], t['data'][194:-24].decode("hex"))
+                        for t in g.eth.eth_getFilterLogs(eth_filter)]
+        submissions = [s for s in set(submission for transaction, account,
+                                      submission in transactions)]
+        logging.debug("Submissions: {}".format(submissions))
+        path = g.ipfs.add(cStringIO.StringIO(json.dumps(submissions)))[1]["Hash"]
+        logging.debug("Publishing {} to ipns...".format(path))
+        g.ipfs.name_publish(path)
+        logging.debug("Done.")
+        return jsonify(submissions=submissions)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
