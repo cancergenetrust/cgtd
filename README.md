@@ -1,6 +1,6 @@
 # Cancer Gene Trust
 
-The [Cancer Gene Trust (CGT)](http://ga4gh.org/#/cancergenetrust) is a decentralized 
+The [GA4GH](http://ga4gh.org/#/cancergenetrust) [Cancer Gene Trust (CGT)](https://github.com/ga4gh/CGT/blob/master/docs/background.md) is a decentralized 
 distributed database of cancer variants and clinical data.
 
 Stewards working directly with patient-participants publish de-identified somatic 
