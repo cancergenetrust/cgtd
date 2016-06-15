@@ -1,25 +1,39 @@
 # Cancer Gene Trust Daemon (Prototype)
 
 A prototype Flask based web server allowing simple
-drag and drop submission to ipfs and Ethereum.
+drag and drop submission to ipfs and ethereum.
 
 # Build, Debug and Test Locally
 
-Start an ipfs and test Ethereum chain locally in containers:
+Note: All of the following use docker containers so that
+the only required dependency is make and docker.
+
+Start an ipfs and test ethereum chain locally in containers:
 
     make stop init ipfs ethereum
+
+Compile the ethereum contract and add it to the test chain:
+
+    make compile
+
+Now wait a bit for geth to mine the contract. You can see ethereum
+logs by:
+    
+    docker logs -f ethereum
 
 Build and start a cgtd container linked to the preceding containers:
 
     make build debug
 
-Web submission form at [http://localhost:5000]
-
-RESTful API doc at [http://localhost:5000]
-
 Note: make debug runs the cgtd daemon out of the current
 directory with auto-reload so you can edit, test, and debug
 continuously.
+
+Web submission form at [http://localhost:5000/add.html]
+
+List of transactions at [http://localhost:5000/transactions.html]
+
+RESTful API doc at [http://localhost:5000/api]
 
 Run pytest inside of the running cgtd container:
 
@@ -37,6 +51,7 @@ Start a cgtd container linked to a local ipfs container:
 
 Note: You'll need to do some configuration on the ethereum container
 depending on which block chain you want to use. See Makefile for some
-examples.
+examples. If running locally you'll need to compile and add
+the contract to the block chain as above.
 
 

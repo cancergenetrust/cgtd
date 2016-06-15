@@ -43,7 +43,6 @@ ethereum:
 		--rpc --rpcport 8545 --rpcaddr "0.0.0.0" --rpccorsdomain "*" \
 		--datadir /data \
 		--dev --nat none --nodiscover --maxpeers 0 \
-		--verbosity 6 --pprof --pprofport 6110 \
 		--password /password.txt \
 		--unlock 0 \
 		--lightkdf \
@@ -69,6 +68,14 @@ push:
 	docker images | grep cgtd
 	docker push robcurrie/cgtd:latest
 
+demo:
+	# Start cgtd in demo mode talking to local test chain
+	docker run -it --rm --name cgtd \
+		--link ipfs:ipfs \
+		--link ethereum:ethereum \
+		-p 80:5000 \
+		robcurrie/cgtd:latest
+
 run:
 	# Start up geth connected to the test network
 	docker run -d --name ethereum \
@@ -87,7 +94,9 @@ shell:
 
 compile:
 	# Compile and submit contract to test ethereum
-	docker exec cgtd python compile.py
+	docker run -it --rm \
+		--link ethereum:ethereum \
+		cgtd python compile.py > VarStore.json
 
 update_requirements:
 	docker exec cgtd pip freeze > requirements.txt
