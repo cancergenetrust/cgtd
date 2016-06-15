@@ -5,6 +5,11 @@ body {
     color: #000000;
 }
 
+#fields-list {
+  word-wrap:break-word;
+  word-break:break-word;
+}
+
 #dropbox {
     border: 2px dashed #000000;
     padding: 20px;

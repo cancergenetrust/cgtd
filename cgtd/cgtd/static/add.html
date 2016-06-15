@@ -20,18 +20,26 @@
 
       <form id="upload-form" action="submissions" method="POST" enctype="multipart/form-data">
         <div class="form-group">
-          <label for="name">Name</label>
-          <input type="text" class="form-control" id="name" name="name" placeholder="Jane Doe">
-        </div>
-
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" class="form-control" id="email" name="email" placeholder="jdoe@ucsc.edu">
-        </div>
-
-        <div class="form-group">
           <label for="institution">Institution</label>
-          <input type="text" class="form-control" id="institution" name="institution"  placeholder="UCSC">
+          <input type="text" class="form-control" id="institution" name="institution"  value="UCSC">
+        </div>
+        <div class="form-group">
+          <label for="patientID">Patient ID</label>
+          <input type="text" class="form-control" id="patientID" patientID="patientID" 
+                 value="163a0083-26fa-4705-bcfb-d264c4cff796">
+        </div>
+        <div class="form-group">
+          <label for="gender">Gender</label>
+          <input type="gender" class="form-control" id="gender" name="gender" value="Male">
+        </div>
+        <div class="form-group">
+          <label for="age">Age</label>
+          <input type="age" class="form-control" id="age" name="age" value="57">
+        </div>
+        <div class="form-group">
+          <label for="tumorClassification">Tumor Classification</label>
+          <input type="tumorClassification" class="form-control" id="tumorClassification" name="tumorClassification" 
+                 value="Non-small-cell lung carcinoma">
         </div>
 
         <div id="dropbox">

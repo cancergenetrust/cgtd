@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CGT Submission</title>
+<title>CGT Transaction</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
       integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 <link rel="stylesheet" type="text/css" href="style.css">
@@ -13,16 +13,12 @@
 <script src="underscore-min.js"></script>
 </head>
 <body>
+
 <div class="container">
 <img class="center-block" src="banner.jpg" />
-<h1 class="text-info">CGT Submission</h1>
+<h1 class="text-info">CGT Transaction</h1>
 
-<div id="fields-list">
-</div>
-
-<p/>
-
-<div id="files-list" class="list-group">
+<div id="fields-list" class="list-group">
 </div>
 
 </div>
@@ -35,24 +31,11 @@
   </h4></li>
 <% }) %>
 </script>
-
-<script type="text/html" id="files-list-template">
-<% _.each(files, function(file) { %>
-  <li class="list-group-item"><h4>
-	<a class="font-weight-bold m-r-8" href="http://ipfs.io<%= file.path %>">IPFS</a>
-	<a class="font-weight-bold m-r-8" href="http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&hgt.customText=http://ipfs.io<%= file.path %>">UCSC</a>
-  <%= file.name %>
-  </h4></li>
-<% }) %>
-</script>
 <script>
 var fieldsListTemplate = _.template($("#fields-list-template").html());
-var filesListTemplate = _.template($("#files-list-template").html());
 
-$.getJSON("http://ipfs.io" + location.search.split('path=')[1], function(data) {
-  delete data.fields.__ajax; // FIX: Remove this, should sort in original form
-  $("#fields-list").html(fieldsListTemplate({fields: data.fields}));
-  $("#files-list").html(filesListTemplate({files: data.files}));
+$.getJSON("/v0/transactions/" + location.search.split('transactionHash=')[1], function(data) {
+  $("#fields-list").html(fieldsListTemplate({fields: data.transaction}));
 });
 </script>
 

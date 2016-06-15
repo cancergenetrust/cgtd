@@ -16,7 +16,6 @@ with open("VarStore.json", "r") as f:
     # REMIND: Move this into the compile step external to the server
     contract["address"] = eth.get_contract_address(contract["transaction"])
     logging.debug("Contract at {}".format(contract["address"]))
-    eth_filter = eth.eth_newFilter(from_block=0, address=contract["address"])
 
 
 @app.before_request
@@ -27,7 +26,7 @@ def connect_to_ipfs():
 
 @app.route("/")
 def index():
-    return app.send_static_file("index.html")
+    return app.send_static_file("transactions.html")
 
 
 """
@@ -64,13 +63,14 @@ class SubmissionListAPI(Resource):
         Returns all transactions including account and transaction
         information from the ethereum blockchain.
 
-        Note: DApps should use the ipns list updated below in put
-        for browsing.
+        Note: DApps should use the ipns list updated below in PUT
         """
+        eth_filter = g.eth.eth_newFilter(from_block=0, address=contract["address"])
         submissions = [{"transaction": t['transactionHash'],
                         "account": t['data'][26:66],
                         "path": t['data'][194:-24].decode("hex")}
                        for t in g.eth.eth_getFilterLogs(eth_filter)]
+        eth_filter = g.eth.eth_uninstallFilter(eth_filter)
         return jsonify(submissions=submissions)
 
     def post(self):
@@ -80,7 +80,7 @@ class SubmissionListAPI(Resource):
         Add all posted files to ipfs along with a json manifest file which
         includes the ipfs path for each file as well as any form fields.
 
-        Then sends a transaction to an ethereum contract referencing
+        Then send a transaction to an ethereum contract referencing
         the ipfs path of the manifest so that the entire list of
         submissions can be assembled via an ethereum event filter.
 
@@ -127,8 +127,10 @@ class SubmissionListAPI(Resource):
         and therefore this should be called after multiple submissions
         have been made vs. per submission.
         """
+        eth_filter = g.eth.eth_newFilter(from_block=0, address=contract["address"])
         transactions = [(t['transactionHash'], t['data'][26:66], t['data'][194:-24].decode("hex"))
                         for t in g.eth.eth_getFilterLogs(eth_filter)]
+        eth_filter = g.eth.eth_uninstallFilter(eth_filter)
         submissions = [s for s in set(submission for transaction, account,
                                       submission in transactions)]
         logging.debug("Submissions: {}".format(submissions))
@@ -137,6 +139,16 @@ class SubmissionListAPI(Resource):
         g.ipfs.name_publish(path)
         logging.debug("Done.")
         return jsonify(submissions=submissions)
+
+
+@api.route("/v0/transactions/<string:transactionHash>")
+class TransactionsAPI(Resource):
+    def get(self, transactionHash):
+        """
+        Get details on the given ethereum transaction
+        """
+        return jsonify(transaction=g.eth.eth_getTransactionByHash(transactionHash))
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
