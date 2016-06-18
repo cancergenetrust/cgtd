@@ -41,19 +41,8 @@ push:
 	docker images | grep cgtd
 	docker push robcurrie/cgtd:latest
 
-demo:
-	# Start cgtd on demo server
-	docker stop cgtd || true && docker rm cgtd || true
-	docker run -d --name cgtd \
-			-v `pwd`:/app:ro \
-			--link ipfs:ipfs \
-			-p 80:5000 \
-			cgtd
-
 run:
-	docker run -d --name cgtd \
-		--link ipfs:ipfs -p 80:5000
-		robcurrie/cgtd:latest
+	docker run -d --name cgtd --link ipfs:ipfs -p 80:5000 robcurrie/cgtd:latest
 
 shell:
 	docker exec -it cgtd /bin/sh

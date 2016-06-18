@@ -35,7 +35,9 @@ Note: Run in another terminal from the above make debug
 
 # Running
 
-Start a cgtd container linked to a local ipfs container:
+Start an ipfs database, initialize the submission list, and 
+start up the cgt web server:
 
     docker run -d --name ipfs ipfs/go-ipfs:latest
-    docker run -d --name cgtd --link ipfs:ipfs -p 5000:5000 robcurrie/cgtd:latest
+	docker exec ipfs sh -c "echo '{\"submissions\": []}' | ipfs add -q | ipfs name publish"
+    docker run -d --name cgtd --link ipfs:ipfs -p 80:5000 robcurrie/cgtd:latest
