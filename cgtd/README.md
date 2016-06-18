@@ -12,18 +12,22 @@ Start an ipfs and test ethereum chain locally in containers:
 
     make stop init ipfs ethereum
 
+Build a local cgtd docker container:
+
+    make build
+
 Compile the ethereum contract and add it to the test chain:
 
     make compile
 
 Now wait a bit for geth to mine the contract. You can see ethereum
 logs by:
-    
+
     docker logs -f ethereum
 
-Build and start a cgtd container linked to the preceding containers:
+Start a cgtd container linked to the preceding containers:
 
-    make build debug
+    make debug
 
 Note: make debug runs the cgtd daemon out of the current
 directory with auto-reload so you can edit, test, and debug
