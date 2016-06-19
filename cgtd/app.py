@@ -20,7 +20,7 @@ def add():
     return render_template("add.html", title="Add")
 
 
-@app.route("/submission")
+@app.route("/submission.html")
 def submission():
     return render_template("submission.html", title="Submission")
 
