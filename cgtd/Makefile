@@ -31,7 +31,7 @@ debug:
 		-v `pwd`:/app:ro \
 		--link ipfs:ipfs \
 		-p 5000:5000 \
-		cgtd python cgtd/cgtd.py
+		cgtd python app.py
 
 test:
 	docker exec cgtd py.test -p no:cacheprovider -s -x

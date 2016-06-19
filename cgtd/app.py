@@ -3,7 +3,7 @@ import logging
 import json
 import cStringIO
 import ipfsApi
-from flask import Flask, request, jsonify, g
+from flask import Flask, request, jsonify, render_template, g
 from flask_restplus import Api, Resource
 
 app = Flask(__name__, static_url_path="")
@@ -16,8 +16,13 @@ def connect_to_ipfs():
 
 
 @app.route("/")
-def index():
-    return app.send_static_file("add.html")
+def add():
+    return render_template("add.html", title="Add")
+
+
+@app.route("/submission")
+def submission():
+    return render_template("submission.html", title="Submission")
 
 
 """
@@ -25,7 +30,7 @@ RESTful API
 """
 api = Api(app, version="v0", title="Cancer Gene Trust API", doc="/api",
           description="""
-RESTful API for the Cancer Gene Trust Web Submission Server (cgtd)
+RESTful API for the Cancer Gene Trust Web Server (cgtd)
 """)
 
 
@@ -59,6 +64,7 @@ class SubmissionListAPI(Resource):
         logging.info("Path: {}".format(path))
 
         # Update steward submissions list and publish to ipns
+        # REMIND: Do we need to synchonize this explicitly?
         steward = json.loads(g.ipfs.cat(g.ipfs.name_resolve()["Path"]))
         if path not in steward["submissions"]:
             steward["submissions"].append(path)
