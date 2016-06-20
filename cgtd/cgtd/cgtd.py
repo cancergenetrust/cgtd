@@ -16,6 +16,7 @@ def connect_to_ipfs():
 
 
 @app.route("/")
+@app.route("/add.html")
 def add():
     return render_template("add.html", title="Add")
 
@@ -23,6 +24,11 @@ def add():
 @app.route("/submission.html")
 def submission():
     return render_template("submission.html", title="Submission")
+
+
+@app.route("/submissions.html")
+def submissions():
+    return render_template("submissions.html", title="Submissions")
 
 
 """
@@ -43,6 +49,13 @@ class IPFSAPI(Resource):
 
 @api.route("/v0/submissions")
 class SubmissionListAPI(Resource):
+
+    def get(self):
+        """
+        Get list of all submissions.
+        """
+        steward = json.loads(g.ipfs.cat(g.ipfs.name_resolve()["Path"]))
+        return jsonify(submissions=steward["submissions"])
 
     def post(self):
         """

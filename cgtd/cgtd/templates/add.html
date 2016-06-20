@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<script src="uploadr.js"></script>
+<form id="upload-form" action="submissions" method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="institution">Institution</label>
+        <input type="text" class="form-control" id="institution" name="institution"  value="UCSC">
+    </div>
+    <div class="form-group">
+        <label for="patientID">Patient ID</label>
+        <input type="text" class="form-control" id="patientID" patientID="patientID" 
+                                                               value="163a0083-26fa-4705-bcfb-d264c4cff796">
+    </div>
+    <div class="form-group">
+        <label for="gender">Gender</label>
+        <input type="gender" class="form-control" id="gender" name="gender" value="Male">
+    </div>
+    <div class="form-group">
+        <label for="age">Age</label>
+        <input type="age" class="form-control" id="age" name="age" value="57">
+    </div>
+    <div class="form-group">
+        <label for="tumorClassification">Tumor Classification</label>
+        <input type="tumorClassification" class="form-control" id="tumorClassification" name="tumorClassification" 
+                                                                                        value="Non-small-cell lung carcinoma">
+    </div>
+
+    <div id="dropbox">
+        <svg class="box__icon" xmlns="http://www.w3.org/2000/svg" width="50" height="43" viewBox="0 0 50 43"><path d="M48.4 26.5c-.9 0-1.7.7-1.7 1.7v11.6h-43.3v-11.6c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v13.2c0 .9.7 1.7 1.7 1.7h46.7c.9 0 1.7-.7 1.7-1.7v-13.2c0-1-.7-1.7-1.7-1.7zm-24.5 6.1c.3.3.8.5 1.2.5.4 0 .9-.2 1.2-.5l10-11.6c.7-.7.7-1.7 0-2.4s-1.7-.7-2.4 0l-7.1 8.3v-25.3c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v25.3l-7.1-8.3c-.7-.7-1.7-.7-2.4 0s-.7 1.7 0 2.4l10 11.6z"/></svg>
+        <div>Drag and Drop Files Here</div>
+    </div><br/>
+
+    <fieldset id="progress" style="display: none">
+        <legend>Progress</legend>
+        <div class="progress-trough">
+            <div id="progress-bar" class="progress-bar">0%</div>
+        </div><br/>
+    </fieldset>
+
+    <button type="submit" class="btn btn-default" id="upload-button">Submit</button>
+</form>
+{% endblock %}

@@ -1,16 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container">
-  <img class="center-block" src="banner.jpg" />
-  <h1 class="text-info">CGT Submission</h1>
+<div id="fields-list">
+</div>
 
-  <div id="fields-list">
-  </div>
+<p/>
 
-  <p/>
-
-  <div id="files-list" class="list-group">
-  </div>
+<div id="files-list" class="list-group">
 </div>
 
 <script type="text/html" id="fields-list-template">
@@ -35,9 +30,9 @@ var fieldsListTemplate = _.template($("#fields-list-template").html());
 var filesListTemplate = _.template($("#files-list-template").html());
 
 $.getJSON("http://ipfs.io" + location.search.split('path=')[1], function(data) {
-  delete data.fields.__ajax; // FIX: Remove this, should sort in original form
-  $("#fields-list").html(fieldsListTemplate({fields: data.fields}));
-  $("#files-list").html(filesListTemplate({files: data.files}));
+    delete data.fields.__ajax; // FIX: Remove this, should sort in original form
+    $("#fields-list").html(fieldsListTemplate({fields: data.fields}));
+    $("#files-list").html(filesListTemplate({files: data.files}));
 });
 </script>
 {% endblock %}
