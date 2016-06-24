@@ -71,13 +71,14 @@ class SubmissionListAPI(Resource):
         manifest["files"] = [{"name": f.filename, "path":
                               "/ipfs/{}".format(g.ipfs.add(f)[1]["Hash"])}
                              for f in request.files.getlist("files[]")]
-        logging.debug("Manifest:".format(manifest))
+        logging.debug("Manifest: {}".format(manifest))
         path = "/ipfs/{}".format(
             g.ipfs.add(cStringIO.StringIO(json.dumps(manifest)))[1]["Hash"])
         logging.info("Path: {}".format(path))
+        # return jsonify(path=path, manifest=manifest)
 
         # Update steward submissions list and publish to ipns
-        # REMIND: Do we need to synchonize this explicitly?
+        # REMIND: Do we need to synchronize this explicitly?
         steward = json.loads(g.ipfs.cat(g.ipfs.name_resolve()["Path"]))
         if path not in steward["submissions"]:
             steward["submissions"].append(path)
@@ -92,4 +93,5 @@ class SubmissionListAPI(Resource):
 
 
 if __name__ == "__main__":
+    app.jinja_env.auto_reload = True
     app.run(host="0.0.0.0", debug=True)

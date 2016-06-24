@@ -19,9 +19,8 @@
 <script type="text/html" id="files-list-template">
 <% _.each(files, function(file) { %>
   <li class="list-group-item"><h4>
-  <a class="font-weight-bold m-r-8" href="http://ipfs.io<%= file.path %>">IPFS</a>
   <a class="font-weight-bold m-r-8" href="http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&hgt.customText=http://ipfs.io<%= file.path %>">UCSC</a>
-  <%= file.name %>
+  <a class="font-weight-bold m-r-8" href="http://ipfs.io<%= file.path %>"><%= file.name %></a>
   </h4></li>
 <% }) %>
 </script>
@@ -30,9 +29,9 @@ var fieldsListTemplate = _.template($("#fields-list-template").html());
 var filesListTemplate = _.template($("#files-list-template").html());
 
 $.getJSON("http://ipfs.io" + location.search.split('path=')[1], function(data) {
-    delete data.fields.__ajax; // FIX: Remove this, should sort in original form
-    $("#fields-list").html(fieldsListTemplate({fields: data.fields}));
-    $("#files-list").html(filesListTemplate({files: data.files}));
+  delete data.fields.__ajax; // FIX: Remove this, should sort in original form
+  $("#fields-list").html(fieldsListTemplate({fields: data.fields}));
+  $("#files-list").html(filesListTemplate({files: data.files}));
 });
 </script>
 {% endblock %}
