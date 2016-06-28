@@ -19,7 +19,6 @@ ipfs:
 	docker exec ipfs ipfs config Datastore.StorageMax "512MB"
 
 init:
-	docker exec ipfs ipfs init --force --empty-repo
 	# Initialize the default steward ipns file
 	docker exec ipfs sh -c "echo '{\"submissions\": []}' | ipfs add -q | ipfs name publish"
 

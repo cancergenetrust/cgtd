@@ -75,7 +75,6 @@ class SubmissionListAPI(Resource):
         path = "/ipfs/{}".format(
             g.ipfs.add(cStringIO.StringIO(json.dumps(manifest)))[1]["Hash"])
         logging.info("Path: {}".format(path))
-        # return jsonify(path=path, manifest=manifest)
 
         # Update steward submissions list and publish to ipns
         # REMIND: Do we need to synchronize this explicitly?
