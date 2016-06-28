@@ -2,8 +2,10 @@
 import logging
 import json
 import cStringIO
+import requests
 import ipfsApi
 from flask import Flask, request, jsonify, render_template, g
+from flask import Response, stream_with_context
 from flask_restplus import Api, Resource
 
 app = Flask(__name__, static_url_path="")
@@ -16,9 +18,9 @@ def connect_to_ipfs():
 
 
 @app.route("/")
-@app.route("/add.html")
-def add():
-    return render_template("add.html", title="Add")
+@app.route("/submissions.html")
+def submissions():
+    return render_template("submissions.html", title="Submissions")
 
 
 @app.route("/submission.html")
@@ -26,9 +28,15 @@ def submission():
     return render_template("submission.html", title="Submission")
 
 
-@app.route("/submissions.html")
-def submissions():
-    return render_template("submissions.html", title="Submissions")
+@app.route("/add.html")
+def add():
+    return render_template("add.html", title="Add")
+
+
+@app.route("/ipfs/<string:multihash>")
+def ipfs(multihash):
+    req = requests.get("http://ipfs:8080/ipfs/{}".format(multihash), stream=True)
+    return Response(stream_with_context(req.iter_content()), content_type=req.headers['content-type'])
 
 
 """
