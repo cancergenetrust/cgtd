@@ -6,15 +6,19 @@
 <script type="text/html" id="submissions-list-template">
 <% _.each(submissions, function(submission) { %>
   <li class="list-group-item"><h4>
-    <a class="font-weight-bold m-r-8" href="/submission.html?multihash=<%= submission %>">View</a>
-    <a class="font-weight-bold m-r-8" href="http://ipfs.io/ipfs/<%= submission %>">Raw</a>
-    <%= submission %>
+    <a class="font-weight-bold m-r-8" href="/submission.html?multihash=<%= submission %>">
+        <%= submission.slice(-5).toUpperCase() %>
+    </a>
+    <a class="font-weight-bold m-r-8" href="/data/<%= submission %>">Raw</a>
   </h4></li>
 <% }) %>
 </script>
 <script>
 var submissionsListTemplate = _.template($("#submissions-list-template").html());
+$("#progressDialog").modal("show");
+$("#progress").html("Finding and authenticating submissions...");
 $.getJSON("/v0/submissions", function(data) {
+  $("#progressDialog").modal("hide");
   if (data.submissions.length == 0) {
     alert("No Submissions Found");
   } else {
