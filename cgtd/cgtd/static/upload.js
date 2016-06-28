@@ -42,7 +42,7 @@ $(document).ready(function() {
 					window.alert(data.msg);
 					return;
 				} else {
-					window.location.href = "/submission.html?path=" + data.path;
+					window.location.href = "/submission.html?multihash=" + data.multihash;
 				}
 			},
 		})

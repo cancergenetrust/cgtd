@@ -6,8 +6,8 @@
 <script type="text/html" id="submissions-list-template">
 <% _.each(submissions, function(submission) { %>
   <li class="list-group-item"><h4>
-    <a class="font-weight-bold m-r-8" href="/submission.html?path=<%= submission %>">View</a>
-    <a class="font-weight-bold m-r-8" href="http://ipfs.io<%= submission %>">Raw</a>
+    <a class="font-weight-bold m-r-8" href="/submission.html?multihash=<%= submission %>">View</a>
+    <a class="font-weight-bold m-r-8" href="http://ipfs.io/ipfs/<%= submission %>">Raw</a>
     <%= submission %>
   </h4></li>
 <% }) %>

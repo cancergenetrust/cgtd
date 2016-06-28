@@ -33,8 +33,13 @@ def add():
     return render_template("add.html", title="Add")
 
 
-@app.route("/ipfs/<string:multihash>")
+@app.route("/data/<string:multihash>")
 def ipfs(multihash):
+    """
+    Proxy requests for ipfs. This should only be used for debugging.
+    In production a proper reverse proxy should pass ipfs requests directly
+    to the ipfs daemon.
+    """
     req = requests.get("http://ipfs:8080/ipfs/{}".format(multihash), stream=True)
     return Response(stream_with_context(req.iter_content()), content_type=req.headers['content-type'])
 
@@ -44,15 +49,16 @@ RESTful API
 """
 api = Api(app, version="v0", title="Cancer Gene Trust API", doc="/api",
           description="""
-RESTful API for the Cancer Gene Trust Web Server (cgtd)
+RESTful API for the Cancer Gene Trust Daemon (cgtd)
+
+Data (vcf files, submission manifests etc...) are all stored by the
+multihash (https://github.com/jbenet/multihash) of their content.
+
+Steward's are identified by a unique id which is the multihash
+of their public encryption key. Their submission list is signed
+using their private key thereby providing authentication, authorization,
+and accounting.
 """)
-
-
-@api.route("/v0/ipfs")
-class IPFSAPI(Resource):
-    def get(self):
-        """ Return ipfs id. """
-        return jsonify(g.ipfs.id())
 
 
 @api.route("/v0/submissions")
@@ -67,38 +73,42 @@ class SubmissionListAPI(Resource):
 
     def post(self):
         """
-        Add posted files and json manifest to ipfs
+        Add posted files and json manifest
 
-        Add all posted files to ipfs along with a json manifest file which
-        includes the ipfs path for each file as well as any form fields.
+        Add all posted files along with a json manifest file which
+        includes the multihash for each file as well as any form fields.
 
-        Returns the submission manifest and its path in ipfs
+        Note: May take several seconds to return as each update involves
+        signing the submission list using a private key and publishing
+        the new id to the rest of the steward servers.
+
+        Returns the submission manifest and its multihash
         """
         manifest = {"fields": {key: value for key, value in
                                request.form.items()}}
-        manifest["files"] = [{"name": f.filename, "path":
-                              "/ipfs/{}".format(g.ipfs.add(f)[1]["Hash"])}
+        manifest["files"] = [{"name": f.filename, "multihash":
+                              "{}".format(g.ipfs.add(f)[1]["Hash"])}
                              for f in request.files.getlist("files[]")]
         logging.debug("Manifest: {}".format(manifest))
-        path = "/ipfs/{}".format(
-            g.ipfs.add(cStringIO.StringIO(json.dumps(manifest)))[1]["Hash"])
-        logging.info("Path: {}".format(path))
+        manifest_multihash = g.ipfs.add(cStringIO.StringIO(json.dumps(manifest)))[1]["Hash"]
+        logging.info("Manifest multihash: {}".format(manifest_multihash))
 
         # Update steward submissions list and publish to ipns
         # REMIND: Do we need to synchronize this explicitly?
         steward = json.loads(g.ipfs.cat(g.ipfs.name_resolve()["Path"]))
-        if path not in steward["submissions"]:
-            steward["submissions"].append(path)
-            steward_path = g.ipfs.add(
+        if manifest_multihash not in steward["submissions"]:
+            steward["submissions"].append(manifest_multihash)
+            steward_multihash = g.ipfs.add(
                 cStringIO.StringIO(json.dumps(steward)))[1]['Hash']
-            g.ipfs.name_publish(steward_path)
-            logging.debug("{} added to submissions list".format(path))
+            g.ipfs.name_publish(steward_multihash)
+            logging.debug("{} added to submissions list".format(manifest_multihash))
         else:
-            logging.debug("{} already in submissions list".format(path))
+            logging.debug("{} already in submissions list".format(manifest_multihash))
 
-        return jsonify(path=path, manifest=manifest)
+        return jsonify(multihash=manifest_multihash, manifest=manifest)
 
 
 if __name__ == "__main__":
+    # Work around bug in flask where templates don't auto-reload
     app.jinja_env.auto_reload = True
     app.run(host="0.0.0.0", debug=True)
