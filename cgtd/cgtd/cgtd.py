@@ -51,14 +51,73 @@ api = Api(app, version="v0", title="Cancer Gene Trust API", doc="/api",
           description="""
 RESTful API for the Cancer Gene Trust Daemon (cgtd)
 
-Data (vcf files, submission manifests etc...) are all stored by the
-multihash (https://github.com/jbenet/multihash) of their content.
-
 Steward's are identified by a unique id which is the multihash
 of their public encryption key. Their submission list is signed
 using their private key thereby providing authentication, authorization,
-and accounting.
+and accounting.  Each steward has a top level json file including
+its name, list of submissions, and list of other stewards.
+
+Data (vcf files, submission manifests etc...) are all stored by the
+multihash (https://github.com/jbenet/multihash) of their content.
+The current underlying implementation leverages ipfs (http://ipfs.io)
+for storage, replication and the public/private key operations.
+
+Note that most operations involve validating public keys, signing,
+and publishing the updated signature to other stewards. As a result
+some operations may take several seconds.
 """)
+
+
+@api.route("/v0/stewards")
+class StewardListAPI(Resource):
+
+    def get(self):
+        """
+        Get a list of all steward information records.
+
+        Note: May take a while as each steward's id must be resolved
+        """
+        steward = json.loads(g.ipfs.cat(g.ipfs.name_resolve()["Path"]))
+        stewards = [{i: json.loads(g.ipfs.cat(g.ipfs.name_resolve(i)["Path"]))} for i in steward["stewards"]]
+        return jsonify(stewards=stewards)
+
+    def post(self):
+        """
+        Add steward
+
+        Returns our updated steward record
+        """
+        new_id = request.form["id"]
+        steward = json.loads(g.ipfs.cat(g.ipfs.name_resolve()["Path"]))
+        if new_id not in steward["stewards"]:
+            # Sort so adding in different orders yields the same list
+            steward["stewards"].append(new_id)
+            steward["stewards"] = sorted(steward["stewards"])
+            logging.info("Added new steward: {}".format(new_id))
+            steward_multihash = g.ipfs.add(
+                cStringIO.StringIO(json.dumps(steward)))[1]['Hash']
+            g.ipfs.name_publish(steward_multihash)
+            logging.info("Published updated steward record")
+        else:
+            logging.info("Steward {} already exists".format(new_id))
+        return jsonify(steward=steward)
+
+    def put(self):
+        """
+        Update our steward list as the union of all other steward lists
+
+        Returns our updated steward record
+        """
+        steward = json.loads(g.ipfs.cat(g.ipfs.name_resolve()["Path"]))
+        stewards = {}
+        for i in steward["stewards"]:
+            if i not in stewards:
+                stewards[i] = json.loads(g.ipfs.cat(g.ipfs.name_resolve(i)["Path"].rsplit('/')[-1]))
+        steward["stewards"] = sorted([k for k, v in stewards.iteritems()])
+        steward_multihash = g.ipfs.add(
+            cStringIO.StringIO(json.dumps(steward)))[1]['Hash']
+        g.ipfs.name_publish(steward_multihash)
+        return jsonify(steward=steward)
 
 
 @api.route("/v0/submissions")
@@ -69,7 +128,8 @@ class SubmissionListAPI(Resource):
         Get list of all submissions.
         """
         steward = json.loads(g.ipfs.cat(g.ipfs.name_resolve()["Path"]))
-        return jsonify(submissions=steward["submissions"])
+        return jsonify(submissions=steward["submissions"]
+                       if "submissions" in steward else [])
 
     def post(self):
         """
@@ -78,9 +138,6 @@ class SubmissionListAPI(Resource):
         Add all posted files along with a json manifest file which
         includes the multihash for each file as well as any form fields.
 
-        Note: May take several seconds to return as each update involves
-        signing the submission list using a private key and publishing
-        the new id to the rest of the steward servers.
 
         Returns the submission manifest and its multihash
         """

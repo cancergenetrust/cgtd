@@ -19,8 +19,8 @@ ipfs:
 	docker exec ipfs ipfs config Datastore.StorageMax "512MB"
 
 init:
-	# Initialize the default steward ipns file
-	docker exec ipfs sh -c "echo '{\"submissions\": []}' | ipfs add -q | ipfs name publish"
+	# Initialize and empty steward information file
+	docker exec ipfs sh -c "echo '{\"domain\": \"lorem.edu\", \"submissions\": [], \"stewards\": []}' | ipfs add -q | ipfs name publish"
 
 build:
 	docker build -t cgtd .
