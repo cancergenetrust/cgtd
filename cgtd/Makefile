@@ -13,6 +13,7 @@ ipfs:
 		-v `pwd`/data/ipfs/export:/export \
 		-v `pwd`/data/ipfs/data:/data/ipfs \
 		-p 8080:8080 \
+		-p 4001:4001 \
 		ipfs/go-ipfs:latest
 	sleep 10
 	# Limit size of db for testing
