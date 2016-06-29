@@ -20,7 +20,8 @@ ipfs:
 	docker exec ipfs ipfs config Datastore.StorageMax "512MB"
 
 init:
-	# Initialize and empty steward information file
+	# Initialize an empty steward information file
+	# This can also be used to reset a steward thereby dropping all submissions
 	docker exec ipfs sh -c "echo '{\"domain\": \"lorem.edu\", \"submissions\": [], \"stewards\": []}' | ipfs add -q | ipfs name publish"
 
 build:

@@ -51,17 +51,6 @@ api = Api(app, version="v0", title="Cancer Gene Trust API", doc="/api",
           description="""
 RESTful API for the Cancer Gene Trust Daemon (cgtd)
 
-Steward's are identified by a unique id which is the multihash
-of their public encryption key. Their submission list is signed
-using their private key thereby providing authentication, authorization,
-and accounting.  Each steward has a top level json file including
-its name, list of submissions, and list of other stewards.
-
-Data (vcf files, submission manifests etc...) are all stored by the
-multihash (https://github.com/jbenet/multihash) of their content.
-The current underlying implementation leverages ipfs (http://ipfs.io)
-for storage, replication and the public/private key operations.
-
 Note that most operations involve validating public keys, signing,
 and publishing the updated signature to other stewards. As a result
 some operations may take several seconds.
