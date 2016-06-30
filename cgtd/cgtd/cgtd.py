@@ -51,61 +51,59 @@ api = Api(app, version="v0", title="Cancer Gene Trust API", doc="/api",
           description="""
 RESTful API for the Cancer Gene Trust Daemon (cgtd)
 
-Note that most operations involve validating public keys, signing,
-and publishing the updated signature to other stewards. As a result
-some operations may take several seconds.
+Note that most operations involve validating public keys, signing, and
+publishing the updated signature to other stewards. As a result some
+operations can take several seconds if the cached resolution from pki
+to multihash has expired.
 """)
 
 
-@api.route("/v0/stewards")
-class StewardListAPI(Resource):
+def resolve(name):
+    return g.ipfs.name_resolve(name)["Path"].rsplit('/')[-1]
+
+
+def get_steward(name=None):
+    return json.loads(g.ipfs.cat(resolve(name)))
+
+
+def update_steward(steward):
+    steward_multihash = g.ipfs.add(
+        cStringIO.StringIO(json.dumps(steward)))[1]['Hash']
+    g.ipfs.name_publish(steward_multihash)
+
+
+@api.route("/v0/peers")
+class PeerListAPI(Resource):
 
     def get(self):
         """
-        Get a list of all steward information records.
+        Get a dereferenced list of all peers and submissions including
+        this server.
 
-        Note: May take a while as each steward's id must be resolved
+        All references are multihashes vs. ids. The results may be cached
+        or published back to cgt as the state of the entire network
+        at this point in time. Also useful for DAPs as all content
+        is statically walkable.
         """
-        steward = json.loads(g.ipfs.cat(g.ipfs.name_resolve()["Path"]))
-        stewards = [{i: json.loads(g.ipfs.cat(g.ipfs.name_resolve(i)["Path"]))} for i in steward["stewards"]]
+        steward = get_steward()
+        stewards = [steward(name) for name in steward["peers"]]
+        stewards.append(steward)
         return jsonify(stewards=stewards)
 
     def post(self):
         """
-        Add steward
-
-        Returns our updated steward record
+        Add peer
         """
         new_id = request.form["id"]
-        steward = json.loads(g.ipfs.cat(g.ipfs.name_resolve()["Path"]))
-        if new_id not in steward["stewards"]:
-            # Sort so adding in different orders yields the same list
-            steward["stewards"].append(new_id)
-            steward["stewards"] = sorted(steward["stewards"])
-            logging.info("Added new steward: {}".format(new_id))
-            steward_multihash = g.ipfs.add(
-                cStringIO.StringIO(json.dumps(steward)))[1]['Hash']
-            g.ipfs.name_publish(steward_multihash)
-            logging.info("Published updated steward record")
+        steward = get_steward()
+        if new_id not in steward["peers"]:
+            # Sort so adding in different order yields the same list
+            steward["peers"].append(new_id)
+            steward["peers"] = sorted(steward["peers"])
+            update_steward(steward)
+            logging.info("Added new peers: {}".format(new_id))
         else:
-            logging.info("Steward {} already exists".format(new_id))
-        return jsonify(steward=steward)
-
-    def put(self):
-        """
-        Update our steward list as the union of all other steward lists
-
-        Returns our updated steward record
-        """
-        steward = json.loads(g.ipfs.cat(g.ipfs.name_resolve()["Path"]))
-        stewards = {}
-        for i in steward["stewards"]:
-            if i not in stewards:
-                stewards[i] = json.loads(g.ipfs.cat(g.ipfs.name_resolve(i)["Path"].rsplit('/')[-1]))
-        steward["stewards"] = sorted([k for k, v in stewards.iteritems()])
-        steward_multihash = g.ipfs.add(
-            cStringIO.StringIO(json.dumps(steward)))[1]['Hash']
-        g.ipfs.name_publish(steward_multihash)
+            logging.info("Peer {} already exists".format(new_id))
         return jsonify(steward=steward)
 
 
@@ -116,7 +114,7 @@ class SubmissionListAPI(Resource):
         """
         Get list of all submissions.
         """
-        steward = json.loads(g.ipfs.cat(g.ipfs.name_resolve()["Path"]))
+        steward = get_steward()
         return jsonify(submissions=steward["submissions"]
                        if "submissions" in steward else [])
 
@@ -141,12 +139,10 @@ class SubmissionListAPI(Resource):
 
         # Update steward submissions list and publish to ipns
         # REMIND: Do we need to synchronize this explicitly?
-        steward = json.loads(g.ipfs.cat(g.ipfs.name_resolve()["Path"]))
+        steward = get_steward()
         if manifest_multihash not in steward["submissions"]:
             steward["submissions"].append(manifest_multihash)
-            steward_multihash = g.ipfs.add(
-                cStringIO.StringIO(json.dumps(steward)))[1]['Hash']
-            g.ipfs.name_publish(steward_multihash)
+            update_steward(steward)
             logging.debug("{} added to submissions list".format(manifest_multihash))
         else:
             logging.debug("{} already in submissions list".format(manifest_multihash))

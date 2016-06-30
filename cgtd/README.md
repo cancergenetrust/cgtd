@@ -12,7 +12,7 @@ stored and referenced via the by the multihash
 
 Steward's are identified by a unique id which is the multihash of their public
 encryption key. Each steward has a top level mutable json file including its
-domain, list of submissions, and list of other stewards. Updates to this top
+domain, list of submissions, and list of peer stewards. Updates to this top
 level steward information filed are signed using their private key.  This
 provides authentication, authorization, and accounting for its contents as well
 as any other content referenced via multihash within it including all
