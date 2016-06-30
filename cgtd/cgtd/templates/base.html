@@ -28,7 +28,10 @@
     <br/>
     <div class="container">
       <ul class="nav nav-pills">
-        <li {% if request.path == '/submissions.html' or request.path == '/' %}class="active"{% endif %}>
+        <li {% if request.path == '/stewards.html' or request.path == '/' %}class="active"{% endif %}>
+          <a href="stewards.html"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span></a>
+        </li>
+        <li {% if request.path == '/submissions.html' %}class="active"{% endif %}>
           <a href="submissions.html"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span></a>
         </li>
         <li {% if request.path == '/add.html' %}class="active"{% endif %}>
@@ -41,7 +44,6 @@
           <img src="cgt_logo_horizontal.svg" style="height: 48px;">
         </a>
       </ul>
-      <br/>
       {% block content %}{% endblock %}
     </div>
   </body>

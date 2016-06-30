@@ -18,6 +18,11 @@ def connect_to_ipfs():
 
 
 @app.route("/")
+@app.route("/stewards.html")
+def stewards():
+    return render_template("stewards.html", title="Stewards")
+
+
 @app.route("/submissions.html")
 def submissions():
     return render_template("submissions.html", title="Submissions")
@@ -45,6 +50,30 @@ def ipfs(multihash):
 
 
 """
+Top level steward record helpers
+REMIND: Probably need to implement a lock so that only one process/thread
+can update at a time.
+"""
+
+
+def resolve(name):
+    multihash = g.ipfs.name_resolve(name)["Path"].rsplit('/')[-1]
+    logging.debug("Resolved {} to {}".format(name, multihash))
+    return multihash
+
+
+def get_steward(name=None):
+    return json.loads(g.ipfs.cat(resolve(name)))
+
+
+def update_steward(steward):
+    steward_multihash = g.ipfs.add(
+        cStringIO.StringIO(json.dumps(steward)))[1]['Hash']
+    g.ipfs.name_publish(steward_multihash)
+    logging.debug("Published {} to {}".format(steward_multihash,
+                                              g.ipfs.id()["ID"]))
+
+"""
 RESTful API
 """
 api = Api(app, version="v0", title="Cancer Gene Trust API", doc="/api",
@@ -58,22 +87,55 @@ to multihash has expired.
 """)
 
 
-def resolve(name):
-    return g.ipfs.name_resolve(name)["Path"].rsplit('/')[-1]
+@api.route("/v0")
+class StewardAPI(Resource):
+
+    def get(self):
+        """ Returns top level steward record """
+        return get_steward()
 
 
-def get_steward(name=None):
-    return json.loads(g.ipfs.cat(resolve(name)))
+@api.route("/v0/id")
+class IDAPI(Resource):
+
+    def get(self):
+        """ Returns id and public key for steward. """
+        return g.ipfs.id()
 
 
-def update_steward(steward):
-    steward_multihash = g.ipfs.add(
-        cStringIO.StringIO(json.dumps(steward)))[1]['Hash']
-    g.ipfs.name_publish(steward_multihash)
+@api.route("/v0/peers/<string:peer_id>")
+class PeersAPI(Resource):
+
+    def post(self, peer_id):
+        """
+        Add peer
+        """
+        steward = get_steward()
+        if peer_id not in steward["peers"]:
+            # Sort so adding in different order yields the same list
+            steward["peers"].append(peer_id)
+            steward["peers"] = sorted(steward["peers"])
+            update_steward(steward)
+            logging.info("Added new peers: {}".format(peer_id))
+        else:
+            logging.info("Peer {} already exists".format(peer_id))
+        return jsonify(steward=steward)
+
+    def delete(self, peer_id):
+        steward = get_steward()
+        if peer_id in steward["peers"]:
+            # Sort so adding in different order yields the same list
+            steward["peers"].remove(peer_id)
+            steward["peers"] = sorted(steward["peers"])
+            update_steward(steward)
+            logging.info("Removed peer: {}".format(peer_id))
+        else:
+            logging.info("Peer {} does not exist".format(peer_id))
+        return jsonify(steward=steward)
 
 
-@api.route("/v0/peers")
-class PeerListAPI(Resource):
+@api.route("/v0/stewards")
+class StewardsListAPI(Resource):
 
     def get(self):
         """
@@ -86,25 +148,9 @@ class PeerListAPI(Resource):
         is statically walkable.
         """
         steward = get_steward()
-        stewards = [steward(name) for name in steward["peers"]]
+        stewards = [get_steward(name) for name in steward["peers"]]
         stewards.append(steward)
         return jsonify(stewards=stewards)
-
-    def post(self):
-        """
-        Add peer
-        """
-        new_id = request.form["id"]
-        steward = get_steward()
-        if new_id not in steward["peers"]:
-            # Sort so adding in different order yields the same list
-            steward["peers"].append(new_id)
-            steward["peers"] = sorted(steward["peers"])
-            update_steward(steward)
-            logging.info("Added new peers: {}".format(new_id))
-        else:
-            logging.info("Peer {} already exists".format(new_id))
-        return jsonify(steward=steward)
 
 
 @api.route("/v0/submissions")
