@@ -122,6 +122,9 @@ class PeersAPI(Resource):
         return jsonify(steward=steward)
 
     def delete(self, peer_id):
+        """
+        Delete peer
+        """
         steward = get_steward()
         if peer_id in steward["peers"]:
             # Sort so adding in different order yields the same list
@@ -149,7 +152,7 @@ class StewardsListAPI(Resource):
         """
         steward = get_steward()
         stewards = [get_steward(name) for name in steward["peers"]]
-        stewards.append(steward)
+        stewards = [steward] + stewards  # prepend our record
         return jsonify(stewards=stewards)
 
 
