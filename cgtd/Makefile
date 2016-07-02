@@ -16,14 +16,10 @@ ipfs:
 		-p 4001:4001 \
 		-p 4002:4002/udp \
 		ipfs/go-ipfs:latest
-	sleep 10
-	# Limit size of db for testing
-	docker exec ipfs ipfs config Datastore.StorageMax "512MB"
 
-init:
-	# Initialize an empty steward information file
-	# This can also be used to reset a steward thereby dropping all submissions
-	docker exec ipfs sh -c "echo '{\"domain\": \"lorem.edu\", \"submissions\": [], \"peers\": []}' | ipfs add -q | ipfs name publish"
+reset:
+	# Reset steward to no submissions and no peers and then gc
+	docker exec ipfs sh -c "echo '{\"domain\": \"cgt.lorem.edu\", \"submissions\": [], \"peers\": []}' | ipfs add -q | xargs ipfs name publish"
 
 build:
 	docker build -t cgtd .

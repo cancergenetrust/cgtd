@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-<h3>Submissions</h3>
-<ul id="submissions-list" class="list-group">
-</ul>
+<h3>Steward</h3>
+<div id="steward"></div>
 
-<script type="text/html" id="submissions-list-template">
-<% _.each(submissions, function(submission) { %>
+<script type="text/html" id="steward-template">
+<ul class="list-group">
+<% _.each(steward.submissions, function(submission) { %>
   <li class="list-group-item"><h4>
     <a class="font-weight-bold m-r-8" href="/submission.html?multihash=<%= submission %>">
         <%= submission.slice(-5).toUpperCase() %>
@@ -13,18 +13,16 @@
     <a class="font-weight-bold m-r-8" href="/data/<%= submission %>">Raw</a>
   </h4></li>
 <% }) %>
+</ul>
 </script>
+
 <script>
-var submissionsListTemplate = _.template($("#submissions-list-template").html());
+var stewardTemplate = _.template($("#steward-template").html());
 $("#progressDialog").modal("show");
-$("#progress").html("Finding and authenticating submissions...");
-$.getJSON("/v0/submissions", function(data) {
-  $("#progressDialog").modal("hide");
-  if (data.submissions.length == 0) {
-    alert("No Submissions Found");
-  } else {
-    $("#submissions-list").html(submissionsListTemplate({submissions: data.submissions}));
-  }
+$("#progress").html("Finding and authenticating steward record...");
+$.getJSON("/data/" + location.search.split('multihash=')[1], function(steward) {
+    $("#progressDialog").modal("hide");
+    $("#steward").html(stewardTemplate({steward: steward}));
 });
 </script>
 {% endblock %}

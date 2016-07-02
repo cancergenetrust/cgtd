@@ -1,26 +1,31 @@
 # Cancer Gene Trust Daemon
 
-Manages steward submissions in an immutable content addressable database and
-provides a web and RESTful api to add and browse stewards and their
-submissions.
+Stores steward submissions in a distributed, replicated and decentralized
+content addressable database.  Provides an HTML interface and RESTful API to
+add, list and authenticate submissions as well as the peering relationship
+between stewards.
 
-Submissions consist of a json manifest with a list of fields and files. Fields
+Submissions consist of a JSON manifest with a list of fields and files. Fields
 typically include de-identified clinical data (i.e. tumor type).  Files
 typically consist of somatic variant vcf files.  Manifest's and files are
-stored and referenced via the by the multihash
-(https://github.com/jbenet/multihash) of their content.
+stored and referenced by the multihash (https://github.com/jbenet/multihash) of
+their content.
 
-Steward's are identified by a unique id which is the multihash of their public
-encryption key. Each steward has a top level mutable json file including its
-domain, list of submissions, and list of peer stewards. Updates to this top
-level steward information filed are signed using their private key.  This
-provides authentication, authorization, and accounting for its contents as well
-as any other content referenced via multihash within it including all
-submissions.
+Each steward has a public private key pair which is used to authenticate their
+submissions. A steward's address is the multihash of their public key.
+
+Eash steward has a top level JSON index file containing it's dns domain, list
+of submissions by multihash and list of peers by address. A steward's address
+resolves to the multihash of the latest version of its index.
+
+Updates to a steward's index file are signed using their private key.  This
+provides authentication and authorization for its contents as well as any other
+content referenced via multihash within it including all submissions.
 
 The current underlying implementation leverages ipfs (http://ipfs.io) for
-storage, replication and ipns for public/private key operations. The web and
-api server are implemented using python and flask (http://flask.pocoo.org/)
+storage and replication and ipns for address resolution and public/private key
+operations.  The server is implemented using python and flask
+(http://flask.pocoo.org/)
 
 # Build, Debug and Test Locally
 

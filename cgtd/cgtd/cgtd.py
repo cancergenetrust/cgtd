@@ -4,8 +4,8 @@ import json
 import cStringIO
 import requests
 import ipfsApi
-from flask import Flask, request, jsonify, render_template, g
-from flask import Response, stream_with_context
+from flask import Flask, request, g
+from flask import Response, jsonify, render_template, stream_with_context
 from flask_restplus import Api, Resource
 
 app = Flask(__name__, static_url_path="")
@@ -24,7 +24,7 @@ def stewards():
 
 
 @app.route("/submissions.html")
-def submissions():
+def steward():
     return render_template("submissions.html", title="Submissions")
 
 
@@ -46,27 +46,45 @@ def ipfs(multihash):
     to the ipfs daemon.
     """
     req = requests.get("http://ipfs:8080/ipfs/{}".format(multihash), stream=True)
-    return Response(stream_with_context(req.iter_content()), content_type=req.headers['content-type'])
+    return Response(stream_with_context(req.iter_content()),
+                    content_type=req.headers['content-type'])
 
 
 """
-Top level steward record helpers
+IPNS helpers to resolve, get and update steward index files
+
 REMIND: Probably need to implement a lock so that only one process/thread
 can update at a time.
 """
 
 
-def resolve(name):
-    multihash = g.ipfs.name_resolve(name)["Path"].rsplit('/')[-1]
-    logging.debug("Resolved {} to {}".format(name, multihash))
+def resolve_steward(address=None):
+    """
+    Resolve ipns address to multihash. If address is None resolve this
+    steward's address locally.
+    """
+    logging.debug("Resolving {}...".format(address if address else
+                                           g.ipfs.id()["ID"]))
+    # If resolving self use local so we get latest, otherwise will
+    # use cache for other servers
+    multihash = g.ipfs.name_resolve(address if address else g.ipfs.id()["ID"],
+                                    opts={'local': address is None})["Path"].rsplit('/')[-1]
+    logging.debug("... to {}".format(multihash))
     return multihash
 
 
-def get_steward(name=None):
-    return json.loads(g.ipfs.cat(resolve(name)))
+def get_steward(address=None):
+    """
+    Return the steward's index. If address is None return this steward's index.
+    """
+    return json.loads(g.ipfs.cat(resolve_steward(address)))
 
 
 def update_steward(steward):
+    """
+    Add steward record to ipfs and publish this multihash against the steward's
+    address.
+    """
     steward_multihash = g.ipfs.add(
         cStringIO.StringIO(json.dumps(steward)))[1]['Hash']
     g.ipfs.name_publish(steward_multihash)
@@ -78,63 +96,60 @@ RESTful API
 """
 api = Api(app, version="v0", title="Cancer Gene Trust API", doc="/api",
           description="""
-RESTful API for the Cancer Gene Trust Daemon (cgtd)
+          RESTful API for the Cancer Gene Trust Daemon (cgtd)
 
-Note that most operations involve validating public keys, signing, and
-publishing the updated signature to other stewards. As a result some
-operations can take several seconds if the cached resolution from pki
-to multihash has expired.
-""")
+          Note that most operations involve validating public keys, signing, and
+          publishing the updated signature to other stewards. As a result some
+          operations can take several seconds if the cached resolution from pki
+          to multihash has expired.
+          """)
 
 
-@api.route("/v0")
-class StewardAPI(Resource):
+@api.route("/v0/")
+class API(Resource):
 
     def get(self):
-        """ Returns top level steward record """
+        """
+        Return steward index
+        If address is missing return this stewards index.
+        """
         return get_steward()
 
 
-@api.route("/v0/id")
-class IDAPI(Resource):
-
-    def get(self):
-        """ Returns id and public key for steward. """
-        return g.ipfs.id()
-
-
-@api.route("/v0/peers/<string:peer_id>")
+@api.route("/v0/peers/<string:address>")
 class PeersAPI(Resource):
 
-    def post(self, peer_id):
+    def post(self, address):
         """
-        Add peer
+        Add address to this steward's peer list
         """
         steward = get_steward()
-        if peer_id not in steward["peers"]:
+        if address == g.ipfs.id()["ID"]:
+            logging.warning("Attempt to add this steward's address to peer list")
+        elif address in steward["peers"]:
+            logging.info("{} already in peer list".format(address))
+        else:
             # Sort so adding in different order yields the same list
-            steward["peers"].append(peer_id)
+            steward["peers"].append(address)
             steward["peers"] = sorted(steward["peers"])
             update_steward(steward)
-            logging.info("Added new peers: {}".format(peer_id))
-        else:
-            logging.info("Peer {} already exists".format(peer_id))
-        return jsonify(steward=steward)
+            logging.info("Added {} to peer list".format(address))
+        return jsonify(peers=steward["peers"])
 
-    def delete(self, peer_id):
+    def delete(self, address):
         """
-        Delete peer
+        Delete address from peer list
         """
         steward = get_steward()
-        if peer_id in steward["peers"]:
+        if address in steward["peers"]:
             # Sort so adding in different order yields the same list
-            steward["peers"].remove(peer_id)
+            steward["peers"].remove(address)
             steward["peers"] = sorted(steward["peers"])
             update_steward(steward)
-            logging.info("Removed peer: {}".format(peer_id))
+            logging.info("Removed {} from peer list".format(address))
         else:
-            logging.info("Peer {} does not exist".format(peer_id))
-        return jsonify(steward=steward)
+            logging.warning("{} does not exist in peer list".format(address))
+        return jsonify(peers=steward["peers"])
 
 
 @api.route("/v0/stewards")
@@ -142,18 +157,17 @@ class StewardsListAPI(Resource):
 
     def get(self):
         """
-        Get a dereferenced list of all peers and submissions including
-        this server.
+        Get a list of all stewards including their peers and submissions.
 
-        All references are multihashes vs. ids. The results may be cached
+        All references are resolved so that the results may be cached
         or published back to cgt as the state of the entire network
         at this point in time. Also useful for DAPs as all content
         is statically walkable.
         """
-        steward = get_steward()
-        stewards = [get_steward(name) for name in steward["peers"]]
-        stewards = [steward] + stewards  # prepend our record
-        return jsonify(stewards=stewards)
+        us = get_steward()
+        stewards = {address: get_steward(address) for address in us["peers"]}
+        stewards[g.ipfs.id()["ID"]] = us
+        return stewards
 
 
 @api.route("/v0/submissions")
@@ -198,6 +212,29 @@ class SubmissionListAPI(Resource):
 
         return jsonify(multihash=manifest_multihash, manifest=manifest)
 
+
+@api.route("/v0/submissions/<string:multihash>")
+class SubmissionAPI(Resource):
+
+    def get(self, multihash):
+        """
+        Get submission
+        """
+        return json.loads(g.ipfs.cat(multihash))
+
+    def delete(self, multihash):
+        """
+        Delete submission
+        """
+        steward = get_steward()
+        if multihash in steward["submissions"]:
+            steward["submissions"].remove(multihash)
+            update_steward(steward)
+            logging.info("{} removed from submissions".format(multihash))
+            return {'message': "{} removed from submissions".format(multihash)}
+        else:
+            logging.warning("{} not in submissions".format(multihash))
+            return {'message': "{} not in submissions".format(multihash)}
 
 if __name__ == "__main__":
     # Work around bug in flask where templates don't auto-reload

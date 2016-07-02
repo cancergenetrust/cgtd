@@ -1,5 +1,11 @@
 import json
 import requests
+import ipfsApi
+
+CGT_UCSC_ADDRESS = "QmaWcGneeMEx6unN8iJCVCxP7Qcv4T91pjuZj9drJrdih1"
+
+
+ipfs = ipfsApi.Client("ipfs", 5001)
 
 
 def url_for(server, *args):
@@ -12,7 +18,29 @@ def test_root(server):
     assert(r.status_code == requests.codes.ok)
 
 
+def test_peers(server):
+    # Add UCSC if it isn't already there
+    r = requests.post(url_for(server, "peers/{}".format(CGT_UCSC_ADDRESS)))
+    assert(r.status_code == requests.codes.ok)
+
+    r = requests.delete(url_for(server, "peers/{}".format(CGT_UCSC_ADDRESS)))
+    assert(r.status_code == requests.codes.ok)
+
+    r = requests.get(url_for(server, ""))
+    assert(r.status_code == requests.codes.ok)
+    assert(CGT_UCSC_ADDRESS not in r.json()["peers"])
+
+    r = requests.post(url_for(server, "peers/{}".format(CGT_UCSC_ADDRESS)))
+    assert(r.status_code == requests.codes.ok)
+
+    r = requests.get(url_for(server, ""))
+    assert(r.status_code == requests.codes.ok)
+    assert(CGT_UCSC_ADDRESS in r.json()["peers"])
+
+
 def test_submit(server):
+    TEST_SUBMISSION = "QmQbDNng7TDxf16ZPH2yqwHKRNoGwsa35pm8GX8N139kWH"
+
     r = requests.post(url_for(server, "submissions"),
                       files=[
                           ("files[]", ("ALL-US__TARGET-10-PAIXPH-03A-01D.vcf",
@@ -22,15 +50,15 @@ def test_submit(server):
                       data={"a_key": "a_value"})
     assert(r.status_code == requests.codes.ok)
     submission = json.loads(r.text)
-    assert submission['multihash'] == "QmQbDNng7TDxf16ZPH2yqwHKRNoGwsa35pm8GX8N139kWH"
+    assert(submission['multihash'] == TEST_SUBMISSION)
 
+    # Make sure it made it into our submissions list
+    r = requests.get(url_for(server, ""))
+    assert(r.status_code == requests.codes.ok)
+    assert(submission["multihash"] in r.json()["submissions"])
 
-# def test_ipns(server):
-#     r = requests.get(url_for(server, "ipfs"))
-#     assert(r.status_code == requests.codes.ok)
-#     ipfs = json.loads(r.text)
-#     # REMIND: Should use publis ipfs.io for final build testing
-#     r = requests.get("http://ipfs:8080/ipns/{}".format(ipfs["ID"]))
-#     assert(r.status_code == requests.codes.ok)
-#     steward = json.loads(r.text)
-#     assert("/ipfs/QmQH59c9hfsb8rBjQ89tS9jRfzJ3GfbCsb319h4ANaq5bh" in steward["submissions"])
+    # And finally remove it
+    r = requests.delete(url_for(server,
+                                "submissions/{}".format(TEST_SUBMISSION)))
+    ipfs.pin_rm(TEST_SUBMISSION)
+    ipfs.repo_gc()
