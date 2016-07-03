@@ -134,7 +134,7 @@ class PeersAPI(Resource):
             steward["peers"] = sorted(steward["peers"])
             update_steward(steward)
             logging.info("Added {} to peer list".format(address))
-        return jsonify(peers=steward["peers"])
+        return steward["peers"]
 
     def delete(self, address):
         """
@@ -149,7 +149,7 @@ class PeersAPI(Resource):
             logging.info("Removed {} from peer list".format(address))
         else:
             logging.warning("{} does not exist in peer list".format(address))
-        return jsonify(peers=steward["peers"])
+        return steward["peers"]
 
 
 @api.route("/v0/stewards")
@@ -178,8 +178,7 @@ class SubmissionListAPI(Resource):
         Get list of all submissions.
         """
         steward = get_steward()
-        return jsonify(submissions=steward["submissions"]
-                       if "submissions" in steward else [])
+        return steward["submissions"] if "submissions" in steward else []
 
     def post(self):
         """
@@ -210,7 +209,7 @@ class SubmissionListAPI(Resource):
         else:
             logging.debug("{} already in submissions list".format(manifest_multihash))
 
-        return jsonify(multihash=manifest_multihash, manifest=manifest)
+        return jsonify(multihash=manifest_multihash)
 
 
 @api.route("/v0/submissions/<string:multihash>")
