@@ -96,12 +96,12 @@ RESTful API
 """
 api = Api(app, version="v0", title="Cancer Gene Trust API", doc="/api",
           description="""
-          RESTful API for the Cancer Gene Trust Daemon (cgtd)
+RESTful API for the Cancer Gene Trust Daemon (cgtd)
 
-          Note that most operations involve validating public keys, signing, and
-          publishing the updated signature to other stewards. As a result some
-          operations can take several seconds if the cached resolution from pki
-          to multihash has expired.
+Note that most operations involve validating public keys, signing, and
+publishing the updated signature to other stewards. As a result some
+operations can take several seconds if the cached resolution from pki
+to multihash has expired.
           """)
 
 
