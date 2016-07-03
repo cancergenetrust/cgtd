@@ -23,9 +23,9 @@ def stewards():
     return render_template("stewards.html", title="Stewards")
 
 
-@app.route("/submissions.html")
+@app.route("/steward.html")
 def steward():
-    return render_template("submissions.html", title="Submissions")
+    return render_template("steward.html", title="Steward")
 
 
 @app.route("/submission.html")
@@ -168,6 +168,16 @@ class StewardsListAPI(Resource):
         stewards = {address: get_steward(address) for address in us["peers"]}
         stewards[g.ipfs.id()["ID"]] = us
         return stewards
+
+
+@api.route("/v0/stewards/<string:address>")
+class StewardsAPI(Resource):
+
+    def get(self, address):
+        """
+        Get steward index
+        """
+        return get_steward(address)
 
 
 @api.route("/v0/submissions")

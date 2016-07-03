@@ -5,12 +5,10 @@
 </ul>
 
 <script type="text/html" id="stewards-list-template">
-<% _.each(stewards, function(steward) { %>
+<% _.each(stewards, function(steward, address) { %>
   <li class="list-group-item">
-    <a class="font-weight-bold m-r-8" href="/steward.html?multihash=<%= steward.multihash %>">
+    <a class="font-weight-bold m-r-8" href="/steward.html?address=<%= address %>">
         <%= steward.domain %>
-        <%= steward.peers %>
-        <%= steward.id %>
     </a>
     <span class="badge"><%= steward.submissions.length %></span>
   </li>
@@ -20,12 +18,12 @@
 var stewardsListTemplate = _.template($("#stewards-list-template").html());
 $("#progressDialog").modal("show");
 $("#progress").html("Finding and authenticating stewards...");
-$.getJSON("/v0/stewards", function(data) {
+$.getJSON("/v0/stewards", function(stewards) {
   $("#progressDialog").modal("hide");
-  if (data.stewards.length == 0) {
+  if (stewards.length == 0) {
     alert("No stewards found");
   } else {
-    $("#stewards-list").html(stewardsListTemplate({stewards: data.stewards}));
+    $("#stewards-list").html(stewardsListTemplate({stewards: stewards}));
   }
 });
 </script>
