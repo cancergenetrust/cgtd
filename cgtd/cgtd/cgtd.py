@@ -113,6 +113,16 @@ class API(Resource):
         return get_steward()
 
 
+@api.route("/v0/address")
+class AddressAPI(Resource):
+
+    def get(self):
+        """
+        Return steward's address
+        """
+        return jsonify(address=g.ipfs.id()["ID"])
+
+
 @api.route("/v0/peers/<string:address>")
 class PeersAPI(Resource):
 
