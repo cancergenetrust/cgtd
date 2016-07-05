@@ -53,3 +53,4 @@ shell:
 
 update_requirements:
 	docker exec cgtd pip freeze > requirements.txt
+

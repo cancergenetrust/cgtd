@@ -2,10 +2,9 @@
 import logging
 import json
 import cStringIO
-import requests
 import ipfsApi
 from flask import Flask, request, g
-from flask import Response, jsonify, render_template, stream_with_context
+from flask import Response, jsonify, render_template
 from flask_restplus import Api, Resource
 
 app = Flask(__name__, static_url_path="")
@@ -45,9 +44,7 @@ def ipfs(multihash):
     In production a proper reverse proxy should pass ipfs requests directly
     to the ipfs daemon.
     """
-    req = requests.get("http://ipfs:8080/ipfs/{}".format(multihash), stream=True)
-    return Response(stream_with_context(req.iter_content()),
-                    content_type=req.headers['content-type'])
+    return Response(g.ipfs.cat(multihash))
 
 
 """
