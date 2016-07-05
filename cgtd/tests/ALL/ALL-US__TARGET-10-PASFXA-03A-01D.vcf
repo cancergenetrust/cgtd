@@ -1,0 +1,29 @@
+##fileformat=VCFv4.1
+##comment=ICGC open access Simple Somatic Mutations (SSM) in VCF format, converted by icgcToLedger.py
+##reference=GRCh37
+##source=ICGC20
+##INFO=<ID=mutated_from_allele,Number=1,Type=String,Description="original allele in sequenced tumor can be different from ref">
+##INFO=<ID=TC,Number=1,Type=String,Description="total read count">
+##INFO=<ID=MC,Number=1,Type=String,Description="mutant allele read count">
+##INFO=<ID=GA,Number=1,Type=String,Description="gene affected">
+##INFO=<ID=TA,Number=1,Type=String,Description="transcript affected">
+##INFO=<ID=VS,Number=1,Type=String,Description="validation status">
+##INFO=<ID=VP,Number=1,Type=String,Description="validation platform">
+#CHROM  POS     ID      REF     ALT     QUAL    FILTER  INFO
+17	7577538	MU30748	C	T	.	.	GA=ENSG00000141510;TA=ENST00000604348;VS=tested and verified;VP=Illumina HiSeq
+17	7577538	MU30748	C	T	.	.	GA=ENSG00000141510;TA=ENST00000508793;VS=tested and verified;VP=Illumina HiSeq
+17	7577538	MU30748	C	T	.	.	GA=ENSG00000141510;TA=ENST00000574684;VS=tested and verified;VP=Illumina HiSeq
+17	7577538	MU30748	C	T	.	.	GA=ENSG00000141510;TA=ENST00000505014;VS=tested and verified;VP=Illumina HiSeq
+17	7577538	MU30748	C	T	.	.	GA=ENSG00000141510;TA=ENST00000455263;VS=tested and verified;VP=Illumina HiSeq
+17	7577538	MU30748	C	T	.	.	GA=ENSG00000141510;TA=ENST00000359597;VS=tested and verified;VP=Illumina HiSeq
+17	7577538	MU30748	C	T	.	.	GA=ENSG00000141510;TA=ENST00000445888;VS=tested and verified;VP=Illumina HiSeq
+17	7577538	MU30748	C	T	.	.	GA=ENSG00000141510;TA=ENST00000576024;VS=tested and verified;VP=Illumina HiSeq
+17	7577538	MU30748	C	T	.	.	GA=ENSG00000141510;TA=ENST00000269305;VS=tested and verified;VP=Illumina HiSeq
+17	7577538	MU30748	C	T	.	.	GA=ENSG00000141510;TA=ENST00000420246;VS=tested and verified;VP=Illumina HiSeq
+17	7577538	MU30748	C	T	.	.	GA=ENSG00000141510;TA=ENST00000413465;VS=tested and verified;VP=Illumina HiSeq
+17	7577538	MU30748	C	T	.	.	GA=ENSG00000141510;TA=ENST00000514944;VS=tested and verified;VP=Illumina HiSeq
+17	7577538	MU30748	C	T	.	.	GA=ENSG00000141510;TA=ENST00000509690;VS=tested and verified;VP=Illumina HiSeq
+17	7577538	MU30748	C	T	.	.	GA=ENSG00000141510;TA=ENST00000503591;VS=tested and verified;VP=Illumina HiSeq
+17	7577538	MU30748	C	T	.	.	GA=ENSG00000141510;TA=ENST00000510385;VS=tested and verified;VP=Illumina HiSeq
+17	7577538	MU30748	C	T	.	.	GA=ENSG00000141510;TA=ENST00000504937;VS=tested and verified;VP=Illumina HiSeq
+17	7577538	MU30748	C	T	.	.	GA=ENSG00000141510;TA=ENST00000504290;VS=tested and verified;VP=Illumina HiSeq

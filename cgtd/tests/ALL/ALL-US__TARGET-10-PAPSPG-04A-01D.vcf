@@ -1,0 +1,27 @@
+##fileformat=VCFv4.1
+##comment=ICGC open access Simple Somatic Mutations (SSM) in VCF format, converted by icgcToLedger.py
+##reference=GRCh37
+##source=ICGC20
+##INFO=<ID=mutated_from_allele,Number=1,Type=String,Description="original allele in sequenced tumor can be different from ref">
+##INFO=<ID=TC,Number=1,Type=String,Description="total read count">
+##INFO=<ID=MC,Number=1,Type=String,Description="mutant allele read count">
+##INFO=<ID=GA,Number=1,Type=String,Description="gene affected">
+##INFO=<ID=TA,Number=1,Type=String,Description="transcript affected">
+##INFO=<ID=VS,Number=1,Type=String,Description="validation status">
+##INFO=<ID=VP,Number=1,Type=String,Description="validation platform">
+#CHROM  POS     ID      REF     ALT     QUAL    FILTER  INFO
+12	29626044	MU40447398	A	T	.	.	GA=ENSG00000187950;TA=ENST00000318184;VS=tested and verified;VP=Illumina HiSeq
+12	29626044	MU40447398	A	T	.	.	GA=ENSG00000257599;TA=ENST00000551108;VS=tested and verified;VP=Illumina HiSeq
+12	29626044	MU40447398	A	T	.	.	GA=ENSG00000257599;TA=ENST00000549411;VS=tested and verified;VP=Illumina HiSeq
+2	37028490	MU40447406	C	T	.	.	GA=ENSG00000205221;TA=ENST00000389975;VS=tested and verified;VP=Illumina HiSeq
+2	37028490	MU40447406	C	T	.	.	GA=ENSG00000205221;TA=ENST00000401530;VS=tested and verified;VP=Illumina HiSeq
+2	37028490	MU40447406	C	T	.	.	GA=ENSG00000205221;TA=ENST00000379241;VS=tested and verified;VP=Illumina HiSeq
+2	37028490	MU40447406	C	T	.	.	GA=ENSG00000205221;TA=ENST00000404084;VS=tested and verified;VP=Illumina HiSeq
+2	37028490	MU40447406	C	T	.	.	GA=ENSG00000205221;TA=ENST00000497382;VS=tested and verified;VP=Illumina HiSeq
+2	37028490	MU40447406	C	T	.	.	GA=ENSG00000205221;TA=ENST00000379242;VS=tested and verified;VP=Illumina HiSeq
+2	37028490	MU40447406	C	T	.	.	GA=ENSG00000205221;TA=ENST00000389975;VS=tested and verified;VP=Illumina HiSeq
+2	37028490	MU40447406	C	T	.	.	GA=ENSG00000205221;TA=ENST00000401530;VS=tested and verified;VP=Illumina HiSeq
+2	37028490	MU40447406	C	T	.	.	GA=ENSG00000205221;TA=ENST00000379241;VS=tested and verified;VP=Illumina HiSeq
+2	37028490	MU40447406	C	T	.	.	GA=ENSG00000205221;TA=ENST00000404084;VS=tested and verified;VP=Illumina HiSeq
+2	37028490	MU40447406	C	T	.	.	GA=ENSG00000205221;TA=ENST00000497382;VS=tested and verified;VP=Illumina HiSeq
+2	37028490	MU40447406	C	T	.	.	GA=ENSG00000205221;TA=ENST00000379242;VS=tested and verified;VP=Illumina HiSeq

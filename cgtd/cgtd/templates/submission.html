@@ -1,14 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
-<div id="fields-list">
+
+<div id="submission">
 </div>
 
-<p/>
+<script type="text/html" id="submission-template">
+<% _.each(files, function(file) { %>
+  <li class="list-group-item"><h4>
+  <a class="font-weight-bold m-r-8" href="http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&hgt.customText=http://<%= window.location.host + '/data/' + file.multihash %>">UCSC</a>
+  <a class="font-weight-bold m-r-8" href="/data/<%= file.multihash %>"><%= file.name %></a>
+  </h4></li>
+<% }) %>
 
-<div id="files-list" class="list-group">
-</div>
-
-<script type="text/html" id="fields-list-template">
 <% _.each(fields, function(value, key, object) { %>
   <li class="list-group-item"><h4>
   <%= key.charAt(0).toUpperCase() + key.slice(1) %>: <%= value %>
@@ -16,22 +19,10 @@
 <% }) %>
 </script>
 
-<script type="text/html" id="files-list-template">
-<% _.each(files, function(file) { %>
-  <li class="list-group-item"><h4>
-  <a class="font-weight-bold m-r-8" href="http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&hgt.customText=http://<%= window.location.host + '/data/' + file.multihash %>">UCSC</a>
-  <a class="font-weight-bold m-r-8" href="/data/<%= file.multihash %>"><%= file.name %></a>
-  </h4></li>
-<% }) %>
-</script>
 <script>
-var fieldsListTemplate = _.template($("#fields-list-template").html());
-var filesListTemplate = _.template($("#files-list-template").html());
-
-$.getJSON("/data/" + location.search.split('multihash=')[1], function(data) {
-  delete data.fields.__ajax; // FIX: Remove this, should sort in original form
-  $("#fields-list").html(fieldsListTemplate({fields: data.fields}));
-  $("#files-list").html(filesListTemplate({files: data.files}));
+var submissionTemplate = _.template($("#submission-template").html());
+$.getJSON("/data/" + location.search.split('multihash=')[1], function(submission) {
+  $("#submission").html(submissionTemplate({fields: submission.fields, files: submission.files}));
 });
 </script>
 {% endblock %}

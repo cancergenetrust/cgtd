@@ -1,0 +1,23 @@
+##fileformat=VCFv4.1
+##comment=ICGC open access Simple Somatic Mutations (SSM) in VCF format, converted by icgcToLedger.py
+##reference=GRCh37
+##source=ICGC20
+##INFO=<ID=mutated_from_allele,Number=1,Type=String,Description="original allele in sequenced tumor can be different from ref">
+##INFO=<ID=TC,Number=1,Type=String,Description="total read count">
+##INFO=<ID=MC,Number=1,Type=String,Description="mutant allele read count">
+##INFO=<ID=GA,Number=1,Type=String,Description="gene affected">
+##INFO=<ID=TA,Number=1,Type=String,Description="transcript affected">
+##INFO=<ID=VS,Number=1,Type=String,Description="validation status">
+##INFO=<ID=VP,Number=1,Type=String,Description="validation platform">
+#CHROM  POS     ID      REF     ALT     QUAL    FILTER  INFO
+7	123672238	MU40447737	C	T	.	.	GA=ENSG00000234224;TA=ENST00000455783;VS=tested and verified;VP=Illumina HiSeq
+7	123672238	MU40447737	C	T	.	.	GA=ENSG00000241345;TA=ENST00000472838;VS=tested and verified;VP=Illumina HiSeq
+7	123672238	MU40447737	C	T	.	.	GA=ENSG00000242593;TA=ENST00000484322;VS=tested and verified;VP=Illumina HiSeq
+11	121385010	MU40448268	C	A	.	.	GA=ENSG00000137642;TA=ENST00000260197;VS=tested and verified;VP=Illumina HiSeq
+11	121385010	MU40448268	C	A	.	.	GA=ENSG00000137642;TA=ENST00000532451;VS=tested and verified;VP=Illumina HiSeq
+17	72345390	MU40448286	G	A	.	.	GA=ENSG00000268626;TA=ENST00000599136;VS=tested and verified;VP=Illumina HiSeq
+17	72345390	MU40448286	G	A	.	.	GA=ENSG00000196169;TA=ENST00000547389;VS=tested and verified;VP=Illumina HiSeq
+17	72345390	MU40448286	G	A	.	.	GA=ENSG00000196169;TA=ENST00000549637;VS=tested and verified;VP=Illumina HiSeq
+17	72345390	MU40448286	G	A	.	.	GA=ENSG00000196169;TA=ENST00000551294;VS=tested and verified;VP=Illumina HiSeq
+17	72345390	MU40448286	G	A	.	.	GA=ENSG00000196169;TA=ENST00000389916;VS=tested and verified;VP=Illumina HiSeq
+17	72345390	MU40448286	G	A	.	.	GA=ENSG00000196169;TA=ENST00000359939;VS=tested and verified;VP=Illumina HiSeq

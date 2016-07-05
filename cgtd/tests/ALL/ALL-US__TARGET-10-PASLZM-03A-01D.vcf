@@ -1,0 +1,17 @@
+##fileformat=VCFv4.1
+##comment=ICGC open access Simple Somatic Mutations (SSM) in VCF format, converted by icgcToLedger.py
+##reference=GRCh37
+##source=ICGC20
+##INFO=<ID=mutated_from_allele,Number=1,Type=String,Description="original allele in sequenced tumor can be different from ref">
+##INFO=<ID=TC,Number=1,Type=String,Description="total read count">
+##INFO=<ID=MC,Number=1,Type=String,Description="mutant allele read count">
+##INFO=<ID=GA,Number=1,Type=String,Description="gene affected">
+##INFO=<ID=TA,Number=1,Type=String,Description="transcript affected">
+##INFO=<ID=VS,Number=1,Type=String,Description="validation status">
+##INFO=<ID=VP,Number=1,Type=String,Description="validation platform">
+#CHROM  POS     ID      REF     ALT     QUAL    FILTER  INFO
+1	148594419	MU40447845	G	T	.	.	GA=ENSG00000243452;TA=ENST00000442702;VS=tested and verified;VP=Illumina HiSeq
+1	148594419	MU40447845	G	T	.	.	GA=ENSG00000226675;TA=ENST00000430618;VS=tested and verified;VP=Illumina HiSeq
+1	148594419	MU40447845	G	T	.	.	GA=ENSG00000237253;TA=ENST00000415104;VS=tested and verified;VP=Illumina HiSeq
+1	148594419	MU40447845	G	T	.	.	GA=ENSG00000243452;TA=ENST00000369187;VS=tested and verified;VP=Illumina HiSeq
+1	148594419	MU40447845	G	T	.	.	GA=ENSG00000243452;TA=ENST00000464336;VS=tested and verified;VP=Illumina HiSeq
