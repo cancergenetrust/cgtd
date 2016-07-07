@@ -2,7 +2,9 @@
 import logging
 import json
 import cStringIO
+from functools import wraps
 import ipfsApi
+from werkzeug.exceptions import BadRequest
 from flask import Flask, request, g
 from flask import Response, jsonify, render_template
 from flask_restplus import Api, Resource
@@ -88,17 +90,44 @@ def update_steward(steward):
     logging.debug("Published {} to {}".format(steward_multihash,
                                               g.ipfs.id()["ID"]))
 
+
+"""
+Very simple api-key authorization
+"""
+
+
+def bad_request(message):
+    e = BadRequest(message)
+    e.data = {'error': message}
+    return e
+
+
+def requires_authorization(f):
+    """
+    Quick and dirty limit mutable api calls to only come from localhost.
+    REMIND: Sort authorization via api key etc....
+    """
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        print request.remote_addr
+        if request.remote_addr != "127.0.0.1":
+            e = BadRequest("Authorization required")
+            raise e
+        return f(*args, **kwargs)
+    return decorated
+
+
 """
 RESTful API
 """
 api = Api(app, version="v0", title="Cancer Gene Trust API", doc="/api",
           description="""
-RESTful API for the Cancer Gene Trust Daemon (cgtd)
+          RESTful API for the Cancer Gene Trust Daemon (cgtd)
 
-Note that most operations involve validating public keys, signing, and
-publishing the updated signature to other stewards. As a result some
-operations can take several seconds if the cached resolution from pki
-to multihash has expired.
+          Note that most operations involve validating public keys, signing, and
+          publishing the updated signature to other stewards. As a result some
+          operations can take several seconds if the cached resolution from pki
+          to multihash has expired.
           """)
 
 
@@ -126,6 +155,7 @@ class AddressAPI(Resource):
 @api.route("/v0/peers/<string:address>")
 class PeersAPI(Resource):
 
+    @requires_authorization
     def post(self, address):
         """
         Add address to this steward's peer list
@@ -141,8 +171,9 @@ class PeersAPI(Resource):
             steward["peers"] = sorted(steward["peers"])
             update_steward(steward)
             logging.info("Added {} to peer list".format(address))
-        return steward["peers"]
+            return steward["peers"]
 
+    @requires_authorization
     def delete(self, address):
         """
         Delete address from peer list
@@ -156,7 +187,7 @@ class PeersAPI(Resource):
             logging.info("Removed {} from peer list".format(address))
         else:
             logging.warning("{} does not exist in peer list".format(address))
-        return steward["peers"]
+            return steward["peers"]
 
 
 @api.route("/v0/stewards")
@@ -197,6 +228,7 @@ class SubmissionListAPI(Resource):
         steward = get_steward()
         return steward["submissions"] if "submissions" in steward else []
 
+    @requires_authorization
     def post(self):
         """
         Add posted files and json manifest
@@ -238,6 +270,7 @@ class SubmissionAPI(Resource):
         """
         return json.loads(g.ipfs.cat(multihash))
 
+    @requires_authorization
     def delete(self, multihash):
         """
         Delete submission
