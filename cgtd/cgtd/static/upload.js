@@ -45,6 +45,10 @@ $(document).ready(function() {
 					window.location.href = "/submission.html?multihash=" + data.multihash;
 				}
 			},
+      error: function(request, status, error) {
+				$("#progressDialog").modal("hide");
+        alert(request.responseJSON.message);
+      }
 		})
 	});
 });
