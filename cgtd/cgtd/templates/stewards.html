@@ -6,12 +6,20 @@
 
 <script type="text/html" id="stewards-list-template">
 <% _.each(stewards, function(steward, address) { %>
-  <li class="list-group-item">
-    <a class="font-weight-bold m-r-8" href="/steward.html?address=<%= address %>">
+  <li class="list-group-item"><h4>
+    <a href="/steward.html?address=<%= address %>">
         <%= steward.domain %>
     </a>
+    <% if (steward.peers.length > 0) { %>
+        peers:
+        <% _.each(steward.peers, function(peer) { %>
+            <a href="/steward.html?address=<%= peer %>">
+                <%= stewards[peer].domain %>
+            </a>
+        <% }) %>
+    <% } %>
     <span class="badge"><%= steward.submissions.length %></span>
-  </li>
+  </h4></li>
 <% }) %>
 </script>
 <script>

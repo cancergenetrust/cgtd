@@ -41,6 +41,7 @@ push:
 	docker push robcurrie/cgtd:latest
 
 run:
+	docker stop cgtd || true && docker rm cgtd || true
 	docker run -d --name cgtd --link ipfs:ipfs -p 80:5000 robcurrie/cgtd:latest
 
 pull:

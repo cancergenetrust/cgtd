@@ -122,13 +122,13 @@ RESTful API
 """
 api = Api(app, version="v0", title="Cancer Gene Trust API", doc="/api",
           description="""
-          RESTful API for the Cancer Gene Trust Daemon (cgtd)
+RESTful API for the Cancer Gene Trust Daemon (cgtd)
 
-          Note that most operations involve validating public keys, signing, and
-          publishing the updated signature to other stewards. As a result some
-          operations can take several seconds if the cached resolution from pki
-          to multihash has expired.
-          """)
+Note that most operations involve validating public keys, signing, and
+publishing the updated signature to other stewards. As a result some
+operations can take several seconds if the cached resolution from pki
+to multihash has expired.
+""")
 
 
 @api.route("/v0/")
@@ -136,7 +136,8 @@ class API(Resource):
 
     def get(self):
         """
-        Return steward index
+        Get steward's index
+
         If address is missing return this stewards index.
         """
         return get_steward()
@@ -147,7 +148,7 @@ class AddressAPI(Resource):
 
     def get(self):
         """
-        Return steward's address
+        Get steward's address
         """
         return jsonify(address=g.ipfs.id()["ID"])
 
@@ -171,7 +172,8 @@ class PeersAPI(Resource):
             steward["peers"] = sorted(steward["peers"])
             update_steward(steward)
             logging.info("Added {} to peer list".format(address))
-            return steward["peers"]
+
+        return steward["peers"]
 
     @requires_authorization
     def delete(self, address):
@@ -187,7 +189,8 @@ class PeersAPI(Resource):
             logging.info("Removed {} from peer list".format(address))
         else:
             logging.warning("{} does not exist in peer list".format(address))
-            return steward["peers"]
+
+        return steward["peers"]
 
 
 @api.route("/v0/stewards")
@@ -197,14 +200,25 @@ class StewardsListAPI(Resource):
         """
         Get a list of all stewards including their peers and submissions.
 
-        All references are resolved so that the results may be cached
-        or published back to cgt as the state of the entire network
-        at this point in time. Also useful for DAPs as all content
-        is statically walkable.
+        All submission references  are resolved so that the results may be
+        cached or published back to cgt as the state of the entire network at
+        this point in time. Also useful for DAPs as all content is statically
+        walkable.
+
+        Recurses one level deep into peers
         """
         us = get_steward()
         stewards = {address: get_steward(address) for address in us["peers"]}
+
+        # Add ourselves
         stewards[g.ipfs.id()["ID"]] = us
+
+        # One level of recursion
+        for address in [peer for address, steward in stewards.iteritems()
+                        for peer in steward["peers"]]:
+            if address not in stewards:
+                stewards[address] = get_steward(address)
+
         return stewards
 
 
