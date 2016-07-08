@@ -27,6 +27,10 @@ storage and replication and ipns for address resolution and public/private key
 operations.  The server is implemented using python and flask
 (http://flask.pocoo.org/)
 
+# Running
+
+    make stop clean ipfs init run
+
 # Build, Debug and Test Locally
 
 Note: All of the following use docker containers so that the only required
@@ -57,7 +61,3 @@ Run pytest inside of the running cgtd container:
     make test
 
 Note: Run in another terminal from the above make debug
-
-# Running
-
-    make stop clean ipfs init run
