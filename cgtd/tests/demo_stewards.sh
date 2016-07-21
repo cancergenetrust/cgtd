@@ -5,7 +5,7 @@ docker ps -a | grep 'test_' | awk '{print $1}' | xargs docker rm || true
 docker pull ipfs/go-ipfs:latest
 docker pull robcurrie/cgtd:latest
 
-domains="cgt.ucsf.edu cgt.ucdavis.edu cgt.mskcc.org cgt.nki.nl cgt.singhealth.com.sg"
+domains="cgt.ucsf.edu cgt.ucdavis.edu cgt.mskcc.org cgt.nki.nl cgt.unimelb.edu.au cgt.singhealth.com.sg"
 
 for domain in $domains; do
     echo "Launching $domain"
