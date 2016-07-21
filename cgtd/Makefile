@@ -30,7 +30,7 @@ debug:
 		-v `pwd`:/app:ro \
 		--link ipfs:ipfs \
 		-p 5000:5000 \
-		cgtd python cgtd/cgtd.py
+		cgtd uwsgi --ini uwsgi.ini --python-autoreload=1
 
 test:
 	docker exec cgtd py.test -p no:cacheprovider -s -x
@@ -51,6 +51,9 @@ pull:
 
 shell:
 	docker exec -it cgtd /bin/sh
+
+update_pip_packages:
+	docker exec cgtd "pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs pip install -U"
 
 update_requirements:
 	docker exec cgtd pip freeze > requirements.txt

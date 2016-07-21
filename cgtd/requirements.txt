@@ -11,7 +11,8 @@ MarkupSafe==0.23
 py==1.4.31
 pytest==2.9.2
 python-dateutil==2.5.3
-pytz==2016.4
+pytz==2016.6.1
 requests==2.10.0
 six==1.10.0
+uWSGI==2.0.13.1
 Werkzeug==0.11.10

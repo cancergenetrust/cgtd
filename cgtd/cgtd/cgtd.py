@@ -3,6 +3,7 @@ import logging
 import json
 import cStringIO
 from functools import wraps
+import uwsgi
 import ipfsApi
 from werkzeug.exceptions import BadRequest
 from flask import Flask, request, g
@@ -161,6 +162,7 @@ class PeersAPI(Resource):
         """
         Add address to this steward's peer list
         """
+        uwsgi.lock()  # make sure only one process does this at a time
         steward = get_steward()
         if address == g.ipfs.id()["ID"]:
             logging.warning("Attempt to add this steward's address to peer list")
@@ -172,7 +174,7 @@ class PeersAPI(Resource):
             steward["peers"] = sorted(steward["peers"])
             update_steward(steward)
             logging.info("Added {} to peer list".format(address))
-
+        uwsgi.unlock()
         return steward["peers"]
 
     @requires_authorization
@@ -263,7 +265,7 @@ class SubmissionListAPI(Resource):
         logging.info("Manifest multihash: {}".format(manifest_multihash))
 
         # Update steward submissions list and publish to ipns
-        # REMIND: Do we need to synchronize this explicitly?
+        uwsgi.lock()  # make sure only one process does this at a time
         steward = get_steward()
         if manifest_multihash not in steward["submissions"]:
             steward["submissions"].append(manifest_multihash)
@@ -271,6 +273,7 @@ class SubmissionListAPI(Resource):
             logging.debug("{} added to submissions list".format(manifest_multihash))
         else:
             logging.debug("{} already in submissions list".format(manifest_multihash))
+        uwsgi.unlock()
 
         return jsonify(multihash=manifest_multihash)
 
