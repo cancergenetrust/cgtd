@@ -30,7 +30,7 @@ debug:
 		-v `pwd`:/app:ro \
 		--link ipfs:ipfs \
 		-p 5000:5000 \
-		cgtd uwsgi --ini uwsgi.ini --python-autoreload=1
+		cgtd uwsgi --ini uwsgi.ini --python-autoreload=1 --processes=1 --threads=1
 
 test:
 	docker exec cgtd py.test -p no:cacheprovider -s -x
