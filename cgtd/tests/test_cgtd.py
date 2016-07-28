@@ -18,6 +18,16 @@ def test_root(server):
     assert(r.status_code == requests.codes.ok)
 
 
+def test_steward(server):
+    r = requests.get(url_for(server, "address"))
+    assert(r.status_code == requests.codes.ok)
+    us = r.json()["address"]
+    r = requests.get(url_for(server, "stewards/{}".format(us)))
+    assert(r.status_code == requests.codes.ok)
+    r = requests.get(url_for(server, "stewards/QmaWcGneeMEx6unN8iJCVCxP7Qcv4T91pjuZj9drJXXXXX"))
+    assert(r.status_code != requests.codes.ok)
+
+
 def test_peers(server):
     # Add UCSC if it isn't already there
     r = requests.post(url_for(server, "peers/{}".format(CGT_UCSC_ADDRESS)))

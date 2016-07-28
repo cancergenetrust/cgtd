@@ -210,7 +210,13 @@ class StewardsListAPI(Resource):
         Recurses one level deep into peers
         """
         us = get_steward()
-        stewards = {address: get_steward(address) for address in us["peers"]}
+        stewards = {}
+        for address in us["peers"]:
+            try:
+                stewards[address] = get_steward(address)
+            except Exception as e:
+                logging.warning(
+                    "Skipping peer {} problems resolving: {}".format(address, e.message))
 
         # Add ourselves
         stewards[g.ipfs.id()["ID"]] = us
@@ -219,7 +225,12 @@ class StewardsListAPI(Resource):
         for address in [peer for address, steward in stewards.iteritems()
                         for peer in steward["peers"]]:
             if address not in stewards:
-                stewards[address] = get_steward(address)
+                try:
+                    # REMIND: We may end up trying and failing twice
+                    stewards[address] = get_steward(address)
+                except Exception as e:
+                    logging.warning(
+                        "Skipping peer {} problems resolving: {}".format(address, e.message))
 
         return stewards
 
@@ -231,7 +242,12 @@ class StewardsAPI(Resource):
         """
         Get steward index
         """
-        return get_steward(address)
+        try:
+            return get_steward(address)
+        except Exception as e:
+            logging.warning(
+                "Skipping peer {} problems resolving: {}".format(address, e.message))
+            return {'message': e.message}, 404
 
 
 @api.route("/v0/submissions")
