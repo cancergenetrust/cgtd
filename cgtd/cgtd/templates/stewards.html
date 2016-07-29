@@ -13,9 +13,11 @@
     <% if (steward.peers.length > 0) { %>
         peers:
         <% _.each(steward.peers, function(peer) { %>
+            <% if (peer in stewards) { %>
             <a href="/steward.html?address=<%= peer %>">
                 <%= stewards[peer].domain %>
             </a>
+            <% } %>
         <% }) %>
     <% } %>
     <span class="badge"><%= steward.submissions.length %></span>
