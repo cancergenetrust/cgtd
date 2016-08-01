@@ -86,7 +86,7 @@ def update_steward(steward):
     address.
     """
     steward_multihash = g.ipfs.add(
-        cStringIO.StringIO(json.dumps(steward)))[1]['Hash']
+        cStringIO.StringIO(json.dumps(steward, sort_keys=True)))[1]['Hash']
     g.ipfs.name_publish(steward_multihash)
     logging.debug("Published {} to {}".format(steward_multihash,
                                               g.ipfs.id()["ID"]))
@@ -129,6 +129,9 @@ Note that most operations involve validating public keys, signing, and
 publishing the updated signature to other stewards. As a result some
 operations can take several seconds if the cached resolution from pki
 to multihash has expired.
+
+Arrays are sorted by value and dictionaries by key so that
+hashes are independent of the order the data is added.
 """)
 
 
@@ -170,8 +173,7 @@ class PeersAPI(Resource):
             logging.info("{} already in peer list".format(address))
         else:
             # Sort so adding in different order yields the same list
-            steward["peers"].append(address)
-            steward["peers"] = sorted(steward["peers"])
+            steward["peers"] = sorted(steward["peers"] + [address])
             update_steward(steward)
             logging.info("Added {} to peer list".format(address))
         uwsgi.unlock()
@@ -277,14 +279,16 @@ class SubmissionListAPI(Resource):
                               "{}".format(g.ipfs.add(f)[1]["Hash"])}
                              for f in request.files.getlist("files[]")]
         logging.debug("Manifest: {}".format(manifest))
-        manifest_multihash = g.ipfs.add(cStringIO.StringIO(json.dumps(manifest)))[1]["Hash"]
+        manifest_multihash = g.ipfs.add(cStringIO.StringIO(
+            json.dumps(manifest, sort_keys=True)))[1]["Hash"]
         logging.info("Manifest multihash: {}".format(manifest_multihash))
 
         # Update steward submissions list and publish to ipns
         uwsgi.lock()  # make sure only one process does this at a time
         steward = get_steward()
         if manifest_multihash not in steward["submissions"]:
-            steward["submissions"].append(manifest_multihash)
+            steward["submissions"] = sorted(
+                steward["submissions"] + [manifest_multihash])
             update_steward(steward)
             logging.debug("{} added to submissions list".format(manifest_multihash))
         else:

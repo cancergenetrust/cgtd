@@ -49,7 +49,7 @@ def test_peers(server):
 
 
 def test_submit(server):
-    TEST_SUBMISSION = "QmQbDNng7TDxf16ZPH2yqwHKRNoGwsa35pm8GX8N139kWH"
+    TEST_SUBMISSION = "Qmdp9JJzEg9iYaSb9om3jw6gJZiiGBvg2VR5SGFXEASEcF"
 
     r = requests.post(url_for(server, "submissions"),
                       files=[
