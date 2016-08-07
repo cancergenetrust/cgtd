@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/ga4gh/CGT.png?label=ready&title=Ready)](https://waffle.io/ga4gh/CGT)
 # Cancer Gene Trust
 
 The [GA4GH](http://ga4gh.org/#/cancergenetrust) [Cancer Gene Trust (CGT)](https://github.com/ga4gh/CGT/blob/master/docs/background.md) is a decentralized 
