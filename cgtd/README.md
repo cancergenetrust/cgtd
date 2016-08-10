@@ -29,7 +29,7 @@ operations.  The server is implemented using python and flask
 
 # Running
 
-    make stop clean ipfs init run
+    make stop clean ipfs reset run
 
 # Build, Debug and Test Locally
 
@@ -38,7 +38,7 @@ dependency is make and docker.
 
 Start and initialize an ipfs database
 
-    make stop ipfs init
+    make stop ipfs reset
 
 Build a local cgtd docker container:
 
