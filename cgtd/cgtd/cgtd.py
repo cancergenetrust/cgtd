@@ -86,7 +86,7 @@ def update_steward(steward):
     address.
     """
     steward_multihash = g.ipfs.add(
-        cStringIO.StringIO(json.dumps(steward, sort_keys=True)))[1]['Hash']
+        cStringIO.StringIO(json.dumps(steward, sort_keys=True)))['Hash']
     g.ipfs.name_publish(steward_multihash)
     logging.debug("Published {} to {}".format(steward_multihash,
                                               g.ipfs.id()["ID"]))
@@ -276,11 +276,11 @@ class SubmissionListAPI(Resource):
         manifest = {"fields": {key: value for key, value in
                                request.form.items()}}
         manifest["files"] = [{"name": f.filename, "multihash":
-                              "{}".format(g.ipfs.add(f)[1]["Hash"])}
+                              "{}".format(g.ipfs.add(f)["Hash"])}
                              for f in request.files.getlist("files[]")]
         logging.debug("Manifest: {}".format(manifest))
         manifest_multihash = g.ipfs.add(cStringIO.StringIO(
-            json.dumps(manifest, sort_keys=True)))[1]["Hash"]
+            json.dumps(manifest, sort_keys=True)))["Hash"]
         logging.info("Manifest multihash: {}".format(manifest_multihash))
 
         # Update steward submissions list and publish to ipns
