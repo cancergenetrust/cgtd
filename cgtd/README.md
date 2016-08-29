@@ -29,16 +29,23 @@ operations.  The server is implemented using python and flask
 
 # Running
 
-    make stop clean ipfs reset run
+Initialize the ipfs data store and create a public private keypair:
+
+    make stop clean init ipfs 
+
+Reset the steward's index to a default cgt.lorem.edu:
+
+    make reset
+
+Startup the server:
+
+    make run
+
 
 # Build, Debug and Test Locally
 
 Note: All of the following use docker containers so that the only required
 dependency is make and docker.
-
-Start and initialize an ipfs database
-
-    make stop ipfs reset
 
 Build a local cgtd docker container:
 
@@ -47,6 +54,8 @@ Build a local cgtd docker container:
 Start a cgtd container linked to the database container:
 
     make debug
+
+NOTE: Assumes you have initialized and reset the database as above
 
 Web interface: [http://localhost:5000/api]
 

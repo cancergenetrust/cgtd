@@ -4,18 +4,27 @@ stop:
 
 clean:
 	sudo rm -rf data/*
-	mkdir -p data/ipfs/export
-	mkdir -p data/ipfs/data
+	mkdir -p data/export
+	mkdir -p data/ipfs
 	sudo chmod -R 777 data
 
+init:
+	# Create a new ipfs database including public/private key
+	docker run -it --rm --name ipfs \
+		-v `pwd`/data/export:/export \
+		-v `pwd`/data/ipfs:/data/ipfs \
+		--entrypoint=ipfs \
+		ipfs/go-ipfs:release init
+
 ipfs:
+	# Start ipfs daemon (assumes database is already initialized)
 	docker run -d --name ipfs \
-		-v `pwd`/data/ipfs/export:/export \
-		-v `pwd`/data/ipfs/data:/data/ipfs \
+		-v `pwd`/data/export:/export \
+		-v `pwd`/data/ipfs:/data/ipfs \
 		-p 8080:8080 \
 		-p 4001:4001 \
 		-p 4002:4002/udp \
-		ipfs/go-ipfs:latest
+		ipfs/go-ipfs:release
 
 reset:
 	# Reset steward to no submissions and no peers and then gc
