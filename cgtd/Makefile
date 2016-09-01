@@ -4,17 +4,25 @@ stop:
 
 clean:
 	sudo rm -rf data/*
-	mkdir -p data/export
-	mkdir -p data/ipfs
-	sudo chmod -R 777 data
 
 init:
 	# Create a new ipfs database including public/private key
+	mkdir -p data/export
+	mkdir -p data/ipfs
+	sudo chmod -R 777 data
 	docker run -it --rm --name ipfs \
-		-v `pwd`/data/export:/export \
 		-v `pwd`/data/ipfs:/data/ipfs \
 		--entrypoint=ipfs \
 		ipfs/go-ipfs:release init
+	# Default config file only listens on 127.0.0.1
+	docker run -it --rm --name ipfs \
+		-v `pwd`/data/ipfs:/data/ipfs \
+		--entrypoint=ipfs \
+		ipfs/go-ipfs:release config Addresses.API /ip4/0.0.0.0/tcp/5001
+	docker run -it --rm --name ipfs \
+		-v `pwd`/data/ipfs:/data/ipfs \
+		--entrypoint=ipfs \
+		ipfs/go-ipfs:release config Addresses.Gateway /ip4/0.0.0.0/tcp/8080
 
 ipfs:
 	# Start ipfs daemon (assumes database is already initialized)

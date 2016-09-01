@@ -27,46 +27,37 @@ storage and replication and ipns for address resolution and public/private key
 operations.  The server is implemented using python and flask
 (http://flask.pocoo.org/)
 
-# Running
+# Running a Production Instance
 
-Initialize the ipfs data store and create a public private keypair:
+Note: The only dependencies for the following is make and docker.
 
-    make stop clean init ipfs 
+Initialize the ipfs data store in data/  and generate a default configuration
+and public/private key pair in data/ipfs/config:
 
-Reset the steward's index to a default cgt.lorem.edu:
+    make init ipfs 
+
+Reset the steward's index to no submissions, no peers, and a domain of
+cgt.lorem.edu:
 
     make reset
 
-Startup the server:
+Startup the cgtd container listening on port 80:
 
     make run
 
-
 # Build, Debug and Test Locally
-
-Note: All of the following use docker containers so that the only required
-dependency is make and docker.
 
 Build a local cgtd docker container:
 
     make build
 
-Start a cgtd container linked to the database container:
+Start a cgtd container linked to the ipfs container:
 
     make debug
 
-NOTE: Assumes you have initialized and reset the database as above
+This runs the cgtd container listening on port 5000 out of the local folder so
+you can make changes and it will live reload.
 
-Web interface: [http://localhost:5000/api]
-
-Direct access to content via multihash:
-[http://localhost:5000/data/<multihash>]
-
-Note: make debug runs the cgtd daemon out of the current directory with
-auto-reload so you can edit, test, and debug continuously.
-
-Run pytest inside of the running cgtd container:
+To run tests open another terminal window and:
 
     make test
-
-Note: Run in another terminal from the above make debug
