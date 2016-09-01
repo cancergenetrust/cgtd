@@ -45,6 +45,29 @@ Startup the cgtd container listening on port 80:
 
     make run
 
+# Making Submissions
+
+To populate a server with test data:
+
+    make populate
+
+Currently access control for mutable operations
+such adding submissions or peers, is limited to
+localhost. Populate runs ddtests/demo_data.py
+inside the cgtd container.
+
+To make a single submission using curl:
+
+    docker exec -it cgtd curl -X POST localhost:5000/v0/submissions \
+    -F "field_one=field_value_one" \
+    -F "field_two=field_value_one" \
+    -F files[]=@tests/ALL/ALL-US__TARGET-10-PAKHZT-03A-01R.vcf \
+    -F files[]=@tests/ALL/ALL-US__TARGET-10-PAKMVD-09A-01D.vcf
+
+To access the submission:
+
+    curl localhost:5000/v0/submissions/QmTLErEx8DLBhJCHWcoakvfRS3EijL6Y2ayVxdMQ9DVLMd
+
 # Build, Debug and Test Locally
 
 Build a local cgtd docker container:

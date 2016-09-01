@@ -110,7 +110,6 @@ def requires_authorization(f):
     """
     @wraps(f)
     def decorated(*args, **kwargs):
-        print request.remote_addr
         if request.remote_addr != "127.0.0.1":
             e = BadRequest("Authorization required")
             raise e

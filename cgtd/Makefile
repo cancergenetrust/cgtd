@@ -42,6 +42,7 @@ build:
 	docker build -t cgtd .
 
 debug:
+	# Run cgtd out of the current directory with reloading after code change
 	docker stop cgtd || true && docker rm cgtd || true
 	docker run --name cgtd --rm -it \
 		-v `pwd`:/app:ro \
@@ -53,11 +54,13 @@ test:
 	docker exec cgtd py.test -p no:cacheprovider -s -x
 
 push:
+	# Update docker hub (requires authentication)
 	docker tag cgtd:latest robcurrie/cgtd:latest
 	docker images | grep cgtd
 	docker push robcurrie/cgtd:latest
 
 run:
+	# Run the latest version from docker hub
 	docker stop cgtd || true && docker rm cgtd || true
 	docker run -d --name cgtd --link ipfs:ipfs -p 80:5000 robcurrie/cgtd:latest
 
@@ -65,6 +68,19 @@ pull:
 	git pull
 	docker pull ipfs/go-ipfs:latest
 	docker pull robcurrie/cgtd:latest
+
+populate:
+	# Populate with data from the tests folder
+	docker exec -it cgtd python tests/demo_data.py
+
+submit:
+	# Make a single test submission
+	docker exec -it cgtd curl -X POST localhost:5000/v0/submissions \
+		-F "field_one=field_value_one" \
+		-F "field_two=field_value_one" \
+		-F files[]=@tests/ALL/ALL-US__TARGET-10-PAKHZT-03A-01R.vcf \
+		-F files[]=@tests/ALL/ALL-US__TARGET-10-PAKMVD-09A-01D.vcf
+	curl localhost:5000/v0/submissions/QmW6LTMSVZbMBRedZvivWcw3XnhuU4Z5ojn12FiJrG9ezx
 
 shell:
 	docker exec -it cgtd /bin/sh
@@ -74,4 +90,3 @@ update_pip_packages:
 
 update_requirements:
 	docker exec cgtd pip freeze > requirements.txt
-
