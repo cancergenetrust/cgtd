@@ -49,7 +49,7 @@ def test_peers(server):
 
 
 def test_submit(server):
-    TEST_SUBMISSION = "Qmdp9JJzEg9iYaSb9om3jw6gJZiiGBvg2VR5SGFXEASEcF"
+    TEST_SUBMISSION = "QmdkAk56NgAnrgTLVBeqwofCu48m2EK5t6eaLG2u1RaaFu"
 
     r = requests.post(url_for(server, "submissions"),
                       files=[
@@ -57,7 +57,19 @@ def test_submit(server):
                                        open("tests/ALL/ALL-US__TARGET-10-PAIXPH-03A-01D.vcf", "rb"))),
                           ("files[]", ("ALL-US__TARGET-10-PAKHZT-03A-01R.vcf",
                                        open("tests/ALL/ALL-US__TARGET-10-PAKHZT-03A-01R.vcf", "rb")))],
-                      data={"a_key": "a_value"})
+                      data={"a_key": "a_value", "another_key": "another_value"})
+    assert(r.status_code == requests.codes.ok)
+    submission = json.loads(r.text)
+    assert(submission['multihash'] == TEST_SUBMISSION)
+
+    # Make sure order of files and/or fields doesn't matter
+    r = requests.post(url_for(server, "submissions"),
+                      files=[
+                          ("files[]", ("ALL-US__TARGET-10-PAKHZT-03A-01R.vcf",
+                                       open("tests/ALL/ALL-US__TARGET-10-PAKHZT-03A-01R.vcf", "rb"))),
+                          ("files[]", ("ALL-US__TARGET-10-PAIXPH-03A-01D.vcf",
+                                       open("tests/ALL/ALL-US__TARGET-10-PAIXPH-03A-01D.vcf", "rb")))],
+                      data={"another_key": "another_value", "a_key": "a_value"})
     assert(r.status_code == requests.codes.ok)
     submission = json.loads(r.text)
     assert(submission['multihash'] == TEST_SUBMISSION)
