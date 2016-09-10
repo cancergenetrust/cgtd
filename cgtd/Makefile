@@ -71,7 +71,7 @@ pull:
 
 populate:
 	# Populate with data from the tests folder
-	docker exec -it cgtd python tests/demo_data.py
+	docker exec -it cgtd python tests/populate.py
 
 submit:
 	# Make a single test submission
