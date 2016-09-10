@@ -8,7 +8,8 @@ import ipfsApi
 from werkzeug.exceptions import BadRequest
 from flask import Flask, request, g
 from flask import Response, jsonify, render_template
-from flask_restplus import Api, Resource
+import flask_restplus
+from flask_restplus import Api, Resource, reqparse
 
 app = Flask(__name__, static_url_path="")
 logging.basicConfig(level=logging.DEBUG)
@@ -251,6 +252,13 @@ class StewardsAPI(Resource):
             return {'message': e.message}, 404
 
 
+# Ceremony to document the publish flag nicely in swagger
+submit_parser = reqparse.RequestParser()
+submit_parser.add_argument("publish", type=flask_restplus.inputs.boolean,
+                           default='true', location="args",
+                           help="Whether to publish submission to index")
+
+
 @api.route("/v0/submissions")
 class SubmissionListAPI(Resource):
 
@@ -262,15 +270,29 @@ class SubmissionListAPI(Resource):
         return steward["submissions"] if "submissions" in steward else []
 
     @requires_authorization
+    # @api.doc(params={"publish": "Publish submission to stewards index"})
+    @api.expect(submit_parser)
     def post(self):
         """
-        Add posted files and json manifest
+        Make a submission
 
-        Add all posted files along with a json manifest file which
-        includes the multihash for each file as well as any form fields.
+        Add all posted files to ipfs and then adds a json manifest
+        consisting of a 'fields' dictionary made up of all the
+        form fields in the POST and a 'files' array with the name
+        and multihash of each posted file:
 
+        {
+            "fields": {"field_name": "field_value", ...}
+            "files": [{"name": "file_name", "multihash": "ipfs_multihash of file"}...]
+        }
 
-        Returns the submission manifest and its multihash
+        Passing publish=False will skip adding the submission to the
+        stewards index. This is useful if you want to make a large number
+        of submissions and need to avoid an ipns publish on every one.
+        Note that the submission will essentially be 'dangling' and up
+        to the client to keep track of and at some point add via PUT.
+
+        Returns the multihash of the submission
         """
         manifest = {"fields": {key: value for key, value in
                                request.form.items()}}
@@ -284,18 +306,45 @@ class SubmissionListAPI(Resource):
         logging.info("Manifest multihash: {}".format(manifest_multihash))
 
         # Update steward submissions list and publish to ipns
-        uwsgi.lock()  # make sure only one process does this at a time
-        steward = get_steward()
-        if manifest_multihash not in steward["submissions"]:
-            steward["submissions"] = sorted(
-                steward["submissions"] + [manifest_multihash])
-            update_steward(steward)
-            logging.debug("{} added to submissions list".format(manifest_multihash))
+        args = submit_parser.parse_args()
+        if args["publish"]:
+            uwsgi.lock()  # make sure only one process does this at a time
+            steward = get_steward()
+            if manifest_multihash not in steward["submissions"]:
+                steward["submissions"] = sorted(
+                    steward["submissions"] + [manifest_multihash])
+                update_steward(steward)
+                logging.debug("{} added to submissions list".format(manifest_multihash))
+            else:
+                logging.debug("{} already in submissions list".format(manifest_multihash))
+            uwsgi.unlock()
         else:
-            logging.debug("{} already in submissions list".format(manifest_multihash))
-        uwsgi.unlock()
+            logging.debug("{} NOT added to submissions list".format(manifest_multihash))
 
         return jsonify(multihash=manifest_multihash)
+
+    @requires_authorization
+    @api.doc(params={"submissions": "List of submission multihash's to publish"})
+    def put(self):
+        """
+        Add a list of existing submissions
+
+        Add the multihash of an existing submission to this server's index.
+        Used with publish=False in POST to add multiple submissions
+        to the index at once and therefore avoid the ipns publish on each.
+        """
+        uwsgi.lock()  # make sure only one process does this at a time
+        steward = get_steward()
+        for s in request.json["submissions"]:
+            if s not in steward["submissions"]:
+                logging.debug("{} added to submissions list".format(s))
+                steward["submissions"] = sorted(steward["submissions"] + [s])
+            else:
+                logging.debug("{} already in submissions list".format(s))
+        update_steward(steward)
+        uwsgi.unlock()
+        logging.debug("{} bulk published".format(request.json["submissions"]))
+        return jsonify(request.json)
 
 
 @api.route("/v0/submissions/<string:multihash>")
