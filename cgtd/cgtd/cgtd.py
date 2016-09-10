@@ -277,7 +277,7 @@ class SubmissionListAPI(Resource):
         manifest["files"] = sorted([{"name": f.filename,
                                      "multihash": "{}".format(g.ipfs.add(f)["Hash"])}
                                     for f in request.files.getlist("files[]")],
-                                   key=lambda k: k['name'])
+                                   key=lambda k: k["name"])
         logging.debug("Manifest: {}".format(manifest))
         manifest_multihash = g.ipfs.add(cStringIO.StringIO(
             json.dumps(manifest, sort_keys=True)))["Hash"]
