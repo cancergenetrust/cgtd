@@ -45,28 +45,37 @@ Startup the cgtd container listening on port 80:
 
     make run
 
+To verify both cgtd and ipfs are working you can query your steward's address:
+
+    curl localhost/v0/address
+
 # Making Submissions
 
-To populate a server with test data:
+To make a single submission:
 
-    make populate
+    make submit
 
-Currently access control for mutable operations
-such adding submissions or peers, is limited to
-localhost. Populate runs ddtests/demo_data.py
-inside the cgtd container.
-
-To make a single submission using curl:
+or explicitly:
 
     docker exec -it cgtd curl -X POST localhost:5000/v0/submissions \
-    -F "field_one=field_value_one" \
-    -F "field_two=field_value_one" \
-    -F files[]=@tests/ALL/ALL-US__TARGET-10-PAKHZT-03A-01R.vcf \
-    -F files[]=@tests/ALL/ALL-US__TARGET-10-PAKMVD-09A-01D.vcf
+        -F "a_field_name=a_field_value" \
+        -F files[]=@tests/ALL/ALL-US__TARGET-10-PAKMVD-09A-01D.vcf
 
 To access the submission:
 
-    curl localhost:5000/v0/submissions/QmTLErEx8DLBhJCHWcoakvfRS3EijL6Y2ayVxdMQ9DVLMd
+    curl localhost/v0/submissions/QmZwuc83iD64mvsf484aGcerUHJce1bJtf1y7AAzQDp234
+
+Access control for mutable operations such as adding submissions or peers
+is restricted to localhost as a poor mans authentication. As a result we curl
+from within the cgtd container above.
+
+To populate a server with a bunch of test data:
+
+    make populate
+
+Finally to see the index for you server including submissions:
+
+    curl localhost/v0/submissions
 
 # Build, Debug and Test Locally
 

@@ -76,10 +76,8 @@ populate:
 submit:
 	# Make a single test submission
 	docker exec -it cgtd curl -X POST localhost:5000/v0/submissions \
-		-F "field_one=field_value_one" \
-		-F "field_two=field_value_one" \
-		-F files[]=@tests/ALL/ALL-US__TARGET-10-PAKHZT-03A-01R.vcf \
-		-F files[]=@tests/ALL/ALL-US__TARGET-10-PAKMVD-09A-01D.vcf
+        -F "a_field_name=a_field_value" \
+        -F files[]=@tests/ALL/ALL-US__TARGET-10-PAKMVD-09A-01D.vcf
 
 shell:
 	docker exec -it cgtd /bin/sh
