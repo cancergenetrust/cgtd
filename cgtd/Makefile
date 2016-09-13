@@ -80,7 +80,6 @@ submit:
 		-F "field_two=field_value_one" \
 		-F files[]=@tests/ALL/ALL-US__TARGET-10-PAKHZT-03A-01R.vcf \
 		-F files[]=@tests/ALL/ALL-US__TARGET-10-PAKMVD-09A-01D.vcf
-	curl localhost:5000/v0/submissions/QmW6LTMSVZbMBRedZvivWcw3XnhuU4Z5ojn12FiJrG9ezx
 
 shell:
 	docker exec -it cgtd /bin/sh
