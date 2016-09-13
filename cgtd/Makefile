@@ -66,7 +66,7 @@ run:
 
 pull:
 	git pull
-	docker pull ipfs/go-ipfs:latest
+	docker pull ipfs/go-ipfs:release
 	docker pull robcurrie/cgtd:latest
 
 populate:

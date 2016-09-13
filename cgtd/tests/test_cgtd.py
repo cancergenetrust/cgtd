@@ -30,7 +30,7 @@ def test_steward(server):
 
 
 def test_peers(server):
-    # Add UCSC if it isn't already there
+    # Add UCSC if it isn't already there, delete it, and add it
     r = requests.post(url_for(server, "peers/{}".format(CGT_UCSC_ADDRESS)))
     assert(r.status_code == requests.codes.ok)
 
