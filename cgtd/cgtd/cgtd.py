@@ -4,7 +4,7 @@ import json
 import cStringIO
 from functools import wraps
 import uwsgi
-import ipfsApi
+import ipfsapi
 from werkzeug.exceptions import BadRequest
 from flask import Flask, request, g
 from flask import Response, jsonify, render_template
@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 @app.before_request
 def connect_to_ipfs():
-    g.ipfs = ipfsApi.Client("ipfs", 5001)
+    g.ipfs = ipfsapi.Client("ipfs", 5001)
 
 
 @app.route("/")
@@ -78,7 +78,12 @@ def get_steward(address=None):
     """
     Return the steward's index. If address is None return this steward's index.
     """
-    return json.loads(g.ipfs.cat(resolve_steward(address)))
+    logging.debug("Resolving {}...".format(address if address else
+                                           g.ipfs.id()["ID"]))
+    multihash = g.ipfs.name_resolve(address if address
+                                    else g.ipfs.id()["ID"])["Path"].rsplit('/')[-1]
+    logging.debug("... to {}".format(multihash))
+    return json.loads(g.ipfs.cat(multihash))
 
 
 def update_steward(steward):
@@ -169,13 +174,11 @@ class PeersAPI(Resource):
         steward = get_steward()
         if address == g.ipfs.id()["ID"]:
             logging.warning("Attempt to add this steward's address to peer list")
-        elif address in steward["peers"]:
-            logging.info("{} already in peer list".format(address))
-        else:
+        elif address not in steward["peers"]:
             # Sort so adding in different order yields the same list
             steward["peers"] = sorted(steward["peers"] + [address])
-            update_steward(steward)
-            logging.info("Added {} to peer list".format(address))
+        update_steward(steward)
+        logging.info("Added {} to peer list".format(address))
         uwsgi.unlock()
         return steward["peers"]
 
@@ -189,10 +192,10 @@ class PeersAPI(Resource):
             # Sort so adding in different order yields the same list
             steward["peers"].remove(address)
             steward["peers"] = sorted(steward["peers"])
-            update_steward(steward)
-            logging.info("Removed {} from peer list".format(address))
-        else:
-            logging.warning("{} does not exist in peer list".format(address))
+        update_steward(steward)
+        logging.info("Removed {} from peer list".format(address))
+        # else:
+        #     logging.warning("{} does not exist in peer list".format(address))
 
         return steward["peers"]
 
@@ -313,10 +316,8 @@ class SubmissionListAPI(Resource):
             if manifest_multihash not in steward["submissions"]:
                 steward["submissions"] = sorted(
                     steward["submissions"] + [manifest_multihash])
-                update_steward(steward)
-                logging.debug("{} added to submissions list".format(manifest_multihash))
-            else:
-                logging.debug("{} already in submissions list".format(manifest_multihash))
+            update_steward(steward)
+            logging.debug("{} added to submissions list".format(manifest_multihash))
             uwsgi.unlock()
         else:
             logging.debug("{} NOT added to submissions list".format(manifest_multihash))
@@ -364,12 +365,9 @@ class SubmissionAPI(Resource):
         steward = get_steward()
         if multihash in steward["submissions"]:
             steward["submissions"].remove(multihash)
-            update_steward(steward)
-            logging.info("{} removed from submissions".format(multihash))
-            return {'message': "{} removed from submissions".format(multihash)}
-        else:
-            logging.warning("{} not in submissions".format(multihash))
-            return {'message': "{} not in submissions".format(multihash)}
+        update_steward(steward)
+        logging.info("{} removed from submissions".format(multihash))
+        return {'message': "{} removed from submissions".format(multihash)}
 
 if __name__ == "__main__":
     # Work around bug in flask where templates don't auto-reload

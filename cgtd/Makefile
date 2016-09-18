@@ -1,3 +1,5 @@
+IPFS_VERSION := v0.4.3-rc4
+
 stop:
 	docker stop cgtd || true && docker rm cgtd || true
 	docker stop ipfs || true && docker rm ipfs || true
@@ -5,34 +7,14 @@ stop:
 clean:
 	sudo rm -rf data/*
 
-init:
-	# Create a new ipfs database including public/private key
-	mkdir -p data/export
-	mkdir -p data/ipfs
-	sudo chmod -R 777 data
-	docker run -it --rm --name ipfs \
-		-v `pwd`/data/ipfs:/data/ipfs \
-		--entrypoint=ipfs \
-		ipfs/go-ipfs:release init
-	# Default config file only listens on 127.0.0.1
-	docker run -it --rm --name ipfs \
-		-v `pwd`/data/ipfs:/data/ipfs \
-		--entrypoint=ipfs \
-		ipfs/go-ipfs:release config Addresses.API /ip4/0.0.0.0/tcp/5001
-	docker run -it --rm --name ipfs \
-		-v `pwd`/data/ipfs:/data/ipfs \
-		--entrypoint=ipfs \
-		ipfs/go-ipfs:release config Addresses.Gateway /ip4/0.0.0.0/tcp/8080
-
 ipfs:
 	# Start ipfs daemon (assumes database is already initialized)
+	mkdir -p data
 	docker run -d --name ipfs \
-		-v `pwd`/data/export:/export \
-		-v `pwd`/data/ipfs:/data/ipfs \
+		-v `pwd`/data:/data/ipfs \
 		-p 8080:8080 \
 		-p 4001:4001 \
-		-p 4002:4002/udp \
-		ipfs/go-ipfs:release
+		ipfs/go-ipfs:$(IPFS_VERSION) --migrate=true
 
 reset:
 	# Reset steward to no submissions and no peers and then gc
@@ -66,7 +48,7 @@ run:
 
 pull:
 	git pull
-	docker pull ipfs/go-ipfs:release
+	docker pull ipfs/go-ipfs:$(IPFS_VERSION)
 	docker pull robcurrie/cgtd:latest
 
 populate:

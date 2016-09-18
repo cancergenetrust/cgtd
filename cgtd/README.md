@@ -31,10 +31,10 @@ operations.  The server is implemented using python and flask
 
 Note: The only dependencies for the following is make and docker.
 
-Initialize the ipfs data store in data/  and generate a default configuration
-and public/private key pair in data/ipfs/config:
+Start the ipfs server and store in data/ and generate a default
+configuration and public/private key pair in data/config:
 
-    make init ipfs 
+    make ipfs 
 
 Reset the steward's index to no submissions, no peers, and a domain of
 cgt.lorem.edu:
