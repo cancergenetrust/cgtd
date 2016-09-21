@@ -51,11 +51,11 @@ To verify both cgtd and ipfs are working you can query your steward's address:
 
 # Making Submissions
 
-To make a single submission:
+To make a test submission:
 
     make submit
 
-or explicitly:
+or via curl:
 
     docker exec -it cgtd curl -X POST localhost:5000/v0/submissions \
         -F "a_field_name=a_field_value" \

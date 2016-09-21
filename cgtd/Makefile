@@ -50,7 +50,6 @@ push:
 
 run:
 	# Run the latest version from docker hub
-	docker stop cgtd || true && docker rm cgtd || true
 	docker run -d --name cgtd --link ipfs:ipfs -p 80:5000 robcurrie/cgtd:latest
 
 pull:
