@@ -53,9 +53,6 @@ def ipfs(multihash):
 
 """
 IPNS helpers to resolve, get and update steward index files
-
-REMIND: Probably need to implement a lock so that only one process/thread
-can update at a time.
 """
 
 
@@ -78,12 +75,7 @@ def get_steward(address=None):
     """
     Return the steward's index. If address is None return this steward's index.
     """
-    logging.debug("Resolving {}...".format(address if address else
-                                           g.ipfs.id()["ID"]))
-    multihash = g.ipfs.name_resolve(address if address
-                                    else g.ipfs.id()["ID"])["Path"].rsplit('/')[-1]
-    logging.debug("... to {}".format(multihash))
-    return json.loads(g.ipfs.cat(multihash))
+    return json.loads(g.ipfs.cat(resolve_steward(address)))
 
 
 def update_steward(steward):
@@ -96,7 +88,6 @@ def update_steward(steward):
     g.ipfs.name_publish(steward_multihash)
     logging.debug("Published {} to {}".format(steward_multihash,
                                               g.ipfs.id()["ID"]))
-
 
 """
 Very simple api-key authorization

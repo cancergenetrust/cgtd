@@ -1,5 +1,11 @@
 IPFS_VERSION := v0.4.3-rc4
 
+ifdef DOMAIN
+	domain=$$DOMAIN
+else
+	domain="lorem.edu"
+endif
+
 stop:
 	docker stop cgtd || true && docker rm cgtd || true
 	docker stop ipfs || true && docker rm ipfs || true
@@ -18,7 +24,8 @@ ipfs:
 
 reset:
 	# Reset steward to no submissions and no peers and then gc
-	docker exec ipfs sh -c "echo '{\"domain\": \"cgt.lorem.edu\", \"submissions\": [], \"peers\": []}' | ipfs add -q | xargs ipfs name publish"
+	echo "Resetting steard to no submissions, no peers, and domain = $(domain)"
+	docker exec ipfs sh -c "echo '{\"domain\": \"$(domain)\", \"submissions\": [], \"peers\": []}' | ipfs add -q | xargs ipfs name publish"
 
 build:
 	docker build -t cgtd .

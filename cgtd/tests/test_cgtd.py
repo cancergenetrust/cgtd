@@ -14,13 +14,16 @@ def url_for(server, *args):
     return "{}/v0/{}".format(server, "/".join(args))
 
 
-def get_latest_index():
+def get_latest_index(server):
     """
     Return the latest steward's index forcing local resolution
     so we don't get a cached entry.
     """
-    multihash = ipfs.name_resolve(ipfs.id()["ID"], opts={'local': True})["Path"].rsplit('/')[-1]
-    return json.loads(ipfs.cat(multihash))
+    # multihash = ipfs.name_resolve(ipfs.id()["ID"], opts={'local': True})["Path"].rsplit('/')[-1]
+    # return json.loads(ipfs.cat(multihash))
+    r = requests.get(url_for(server, ""))
+    assert(r.status_code == requests.codes.ok)
+    return r.json()
 
 
 def test_root(server):
@@ -41,14 +44,14 @@ def test_steward(server):
 def test_peers(server):
     # Delete it to make sure its not there
     r = requests.delete(url_for(server, "peers/{}".format(CGT_UCSC_ADDRESS)))
-    assert(CGT_UCSC_ADDRESS not in get_latest_index()["peers"])
+    assert(CGT_UCSC_ADDRESS not in get_latest_index(server)["peers"])
 
     r = requests.post(url_for(server, "peers/{}".format(CGT_UCSC_ADDRESS)))
     assert(r.status_code == requests.codes.ok)
-    assert(CGT_UCSC_ADDRESS in get_latest_index()["peers"])
+    assert(CGT_UCSC_ADDRESS in get_latest_index(server)["peers"])
 
     r = requests.delete(url_for(server, "peers/{}".format(CGT_UCSC_ADDRESS)))
-    assert(CGT_UCSC_ADDRESS not in get_latest_index()["peers"])
+    assert(CGT_UCSC_ADDRESS not in get_latest_index(server)["peers"])
 
 
 def test_submit(server):
@@ -77,7 +80,7 @@ def test_submit(server):
     assert(submission['multihash'] == TEST_SUBMISSION)
 
     # Make sure it made it into our submissions list
-    assert(submission["multihash"] in get_latest_index()["submissions"])
+    assert(submission["multihash"] in get_latest_index(server)["submissions"])
 
     # And finally remove it
     r = requests.delete(url_for(server,
@@ -99,7 +102,7 @@ def test_bulk_submit(server):
         submissions.append(json.loads(r.text)["multihash"])
 
     # Make sure none of the submissions were published
-    index = get_latest_index()
+    index = get_latest_index(server)
     for s in submissions:
         assert(s not in index["submissions"])
 
@@ -108,6 +111,6 @@ def test_bulk_submit(server):
     assert(r.status_code == requests.codes.ok)
 
     # And verify they are now in the index for the steward
-    index = get_latest_index()
+    index = get_latest_index(server)
     for s in submissions:
         assert(s in index["submissions"])

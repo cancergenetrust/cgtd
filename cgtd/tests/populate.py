@@ -28,5 +28,7 @@ for name, fields in submissions.iteritems():
     assert(r.status_code == requests.codes.ok)
     submitted.append(json.loads(r.text)["multihash"])
 
+print("Publishing submissions...")
 r = requests.put("{}/v0/submissions".format(args.host), json={"submissions": submitted})
 assert(r.status_code == requests.codes.ok)
+print("Done.")
