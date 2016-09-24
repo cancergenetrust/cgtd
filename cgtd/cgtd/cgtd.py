@@ -2,6 +2,7 @@
 import logging
 import json
 import cStringIO
+import requests
 from functools import wraps
 import uwsgi
 import ipfsapi
@@ -205,29 +206,25 @@ class StewardsListAPI(Resource):
 
         Recurses one level deep into peers
         """
-        us = get_steward()
-        stewards = {}
-        for address in us["peers"]:
-            try:
-                stewards[address] = get_steward(address)
-            except Exception as e:
-                logging.warning(
-                    "Skipping peer {} problems resolving: {}".format(address, e.message))
-
-        # Add ourselves
-        stewards[g.ipfs.id()["ID"]] = us
-
-        # One level of recursion
-        for address in [peer for address, steward in stewards.iteritems()
-                        for peer in steward["peers"]]:
-            if address not in stewards:
-                try:
-                    # REMIND: We may end up trying and failing twice
-                    stewards[address] = get_steward(address)
-                except Exception as e:
-                    logging.warning(
-                        "Skipping peer {} problems resolving: {}".format(address, e.message))
-
+        stewards = {g.ipfs.id()["ID"]: get_steward()}  # Start with self
+        for i in range(0, 2):
+            logging.debug("Iteration {} for peer graph".format(i))
+            for address in [peer for address, steward in stewards.iteritems()
+                            for peer in steward["peers"]]:
+                if address in stewards:
+                    logging.debug("Skipping {}, already resolved".format(address))
+                else:
+                    try:
+                        logging.debug("Resolving steward {}".format(address))
+                        r = requests.get("http://ipfs:8080/ipns/{}".format(address),
+                                         timeout=5.0)
+                        assert(r.status_code == requests.codes.ok)
+                        stewards[address] = r.json()
+                    except Exception as e:
+                        stewards[address] = {"domain": "unreachable",
+                                             "peers": [], "submissions": []}
+                        logging.warning("Skipping peer {} problems resolving: {}".format(
+                            address, e.message))
         return stewards
 
 

@@ -1,4 +1,4 @@
-IPFS_VERSION := v0.4.3-rc4
+IPFS_VERSION := v0.4.3
 
 ifdef DOMAIN
 	domain=$$DOMAIN
