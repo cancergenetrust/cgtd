@@ -24,7 +24,7 @@ ipfs:
 
 reset:
 	# Reset steward to no submissions and no peers and then gc
-	echo "Resetting steard to no submissions, no peers, and domain = $(domain)"
+	echo "Resetting steward to no submissions, no peers, and domain = $(domain)"
 	docker exec ipfs sh -c "echo '{\"domain\": \"$(domain)\", \"submissions\": [], \"peers\": []}' | ipfs add -q | xargs ipfs name publish"
 
 build:
