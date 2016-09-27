@@ -218,8 +218,6 @@ class StewardsListAPI(Resource):
         Recurses one level deep into peers
         """
         args = stewards_parser.parse_args()
-        print(args["timeout"])
-        print(args["depth"])
         stewards = {g.ipfs.id()["ID"]: get_steward()}  # Start with self
         for i in range(0, args["depth"]):
             logging.debug("Iteration {} for peer graph".format(i))
