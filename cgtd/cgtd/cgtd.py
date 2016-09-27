@@ -192,9 +192,20 @@ class PeersAPI(Resource):
         return steward["peers"]
 
 
+# Ceremony to document the publish flag nicely in swagger
+stewards_parser = reqparse.RequestParser()
+stewards_parser.add_argument("timeout", type=flask_restplus.inputs.positive,
+                             default=5, location="args",
+                             help="Seconds to wait for IPNS to resolve a steward")
+stewards_parser.add_argument("depth", type=flask_restplus.inputs.positive,
+                             default=2, location="args",
+                             help="How deep to follow the peer graph")
+
+
 @api.route("/v0/stewards")
 class StewardsListAPI(Resource):
 
+    @api.expect(stewards_parser)
     def get(self):
         """
         Get a list of all stewards including their peers and submissions.
@@ -206,8 +217,11 @@ class StewardsListAPI(Resource):
 
         Recurses one level deep into peers
         """
+        args = stewards_parser.parse_args()
+        print(args["timeout"])
+        print(args["depth"])
         stewards = {g.ipfs.id()["ID"]: get_steward()}  # Start with self
-        for i in range(0, 2):
+        for i in range(0, args["depth"]):
             logging.debug("Iteration {} for peer graph".format(i))
             for address in [peer for address, steward in stewards.iteritems()
                             for peer in steward["peers"]]:
@@ -217,7 +231,7 @@ class StewardsListAPI(Resource):
                     try:
                         logging.debug("Resolving steward {}".format(address))
                         r = requests.get("http://ipfs:8080/ipns/{}".format(address),
-                                         timeout=5.0)
+                                         timeout=args["timeout"])
                         assert(r.status_code == requests.codes.ok)
                         stewards[address] = r.json()
                     except Exception as e:
@@ -261,7 +275,6 @@ class SubmissionListAPI(Resource):
         return steward["submissions"] if "submissions" in steward else []
 
     @requires_authorization
-    # @api.doc(params={"publish": "Publish submission to stewards index"})
     @api.expect(submit_parser)
     def post(self):
         """
