@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Cancer Gene Trust</title>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="underscore-min.js"></script>
+    <script src="steward.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+  </head>
+  <body>
+    <div id="progressDialog" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+            <strong id="progress"></strong>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <ul class="nav nav-pills">
+        <a href="http://www.cancergenetrust.org" class="vertical-center pull-left">
+          <img src="cgt_logo_horizontal.svg" style="height: 48px;">
+        </a>
+      </ul>
+
+      <div id="steward"></div>
+
+      <script type="text/html" id="steward-template">
+      <h4>Domain: <%= steward.domain %></h4>
+      <h4>Peers</h4>
+      <ul class="list-group">
+      <% _.each(steward.peers, function(peer) { %>
+        <li class="list-group-item"><h4>
+          <a href="/index.html?steward=<%= peer %>">
+              <%= peer %>
+          </a>
+        </h4></li>
+      <% }) %>
+      </ul>
+      <h4>Submissions</h4>
+      <ul class="list-group">
+      <% _.each(steward.submissions, function(submission) { %>
+        <li class="list-group-item"><h4>
+          <a href="/index.html?submission=<%= submission %>">
+              <%= submission %>
+          </a>
+        </h4></li>
+      <% }) %>
+      </ul>
+      </script>
+
+      <div id="submission"></div>
+
+      <script type="text/html" id="submission-template">
+      <% _.each(files, function(file) { %>
+        <li class="list-group-item"><h4>
+        <a class="font-weight-bold m-r-8"
+        href="http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&hgt.customText=http://<%=
+        window.location.host + '/ipfs/' + file.multihash %>">UCSC</a>
+        <a class="font-weight-bold m-r-8" href="/ipfs/<%= file.multihash %>"><%= file.name %></a>
+        </h4></li>
+      <% }) %>
+
+      <% _.each(fields, function(value, key, object) { %>
+        <li class="list-group-item"><h4>
+        <%= key.charAt(0).toUpperCase() + key.slice(1) %>: <%= value %>
+        </h4></li>
+      <% }) %>
+      </script>
+
+    </div>
+  </body>
+</html>

@@ -8,7 +8,7 @@ import uwsgi
 import ipfsapi
 from werkzeug.exceptions import BadRequest
 from flask import Flask, request, g
-from flask import Response, jsonify, render_template
+from flask import Response, jsonify
 import flask_restplus
 from flask_restplus import Api, Resource, reqparse
 
@@ -21,35 +21,9 @@ def connect_to_ipfs():
     g.ipfs = ipfsapi.Client("ipfs", 5001)
 
 
-@app.route("/")
-@app.route("/stewards.html")
-def stewards():
-    return render_template("stewards.html", title="Stewards")
-
-
-@app.route("/steward.html")
-def steward():
-    return render_template("steward.html", title="Steward")
-
-
-@app.route("/submission.html")
-def submission():
-    return render_template("submission.html", title="Submission")
-
-
-@app.route("/add.html")
-def add():
-    return render_template("add.html", title="Add")
-
-
-@app.route("/data/<string:multihash>")
-def ipfs(multihash):
-    """
-    Proxy requests for ipfs. This should only be used for debugging.
-    In production a proper reverse proxy should pass ipfs requests directly
-    to the ipfs daemon.
-    """
-    return Response(g.ipfs.cat(multihash))
+@app.route('/')
+def index():
+    return app.send_static_file('index.html')
 
 
 """
@@ -89,6 +63,28 @@ def update_steward(steward):
     g.ipfs.name_publish(steward_multihash)
     logging.debug("Published {} to {}".format(steward_multihash,
                                               g.ipfs.id()["ID"]))
+
+
+"""
+Proxy requests for ipfs and ipns. This should only be used for debugging.
+In production a proper reverse proxy should pass ipfs requests directly
+to the ipfs daemon.
+"""
+
+
+@app.route("/ipfs/<string:multihash>")
+def ipfs(multihash):
+    return Response(g.ipfs.cat(multihash))
+
+
+@app.route("/ipns/<string:address>")
+def ipns(address):
+    try:
+        r = requests.get("http://ipfs:8080/ipns/{}".format(address), timeout=5.0)
+        return (r.text, r.status_code, r.headers.items())
+    except:
+        return("unreachable", 408)
+
 
 """
 Very simple api-key authorization
@@ -190,54 +186,6 @@ class PeersAPI(Resource):
         #     logging.warning("{} does not exist in peer list".format(address))
 
         return steward["peers"]
-
-
-# Ceremony to document the publish flag nicely in swagger
-stewards_parser = reqparse.RequestParser()
-stewards_parser.add_argument("timeout", type=flask_restplus.inputs.positive,
-                             default=5, location="args",
-                             help="Seconds to wait for IPNS to resolve a steward")
-stewards_parser.add_argument("depth", type=flask_restplus.inputs.positive,
-                             default=2, location="args",
-                             help="How deep to follow the peer graph")
-
-
-@api.route("/v0/stewards")
-class StewardsListAPI(Resource):
-
-    @api.expect(stewards_parser)
-    def get(self):
-        """
-        Get a list of all stewards including their peers and submissions.
-
-        All submission references  are resolved so that the results may be
-        cached or published back to cgt as the state of the entire network at
-        this point in time. Also useful for DAPs as all content is statically
-        walkable.
-
-        Recurses one level deep into peers
-        """
-        args = stewards_parser.parse_args()
-        stewards = {g.ipfs.id()["ID"]: get_steward()}  # Start with self
-        for i in range(0, args["depth"]):
-            logging.debug("Iteration {} for peer graph".format(i))
-            for address in [peer for address, steward in stewards.iteritems()
-                            for peer in steward["peers"]]:
-                if address in stewards:
-                    logging.debug("Skipping {}, already resolved".format(address))
-                else:
-                    try:
-                        logging.debug("Resolving steward {}".format(address))
-                        r = requests.get("http://ipfs:8080/ipns/{}".format(address),
-                                         timeout=args["timeout"])
-                        assert(r.status_code == requests.codes.ok)
-                        stewards[address] = r.json()
-                    except Exception as e:
-                        stewards[address] = {"domain": "unreachable",
-                                             "peers": [], "submissions": []}
-                        logging.warning("Skipping peer {} problems resolving: {}".format(
-                            address, e.message))
-        return stewards
 
 
 @api.route("/v0/stewards/<string:address>")
@@ -369,6 +317,4 @@ class SubmissionAPI(Resource):
         return {'message': "{} removed from submissions".format(multihash)}
 
 if __name__ == "__main__":
-    # Work around bug in flask where templates don't auto-reload
-    app.jinja_env.auto_reload = True
     app.run(host="0.0.0.0", debug=True)
