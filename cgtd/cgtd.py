@@ -8,7 +8,7 @@ import uwsgi
 import ipfsapi
 from werkzeug.exceptions import BadRequest
 from flask import Flask, request, g
-from flask import Response, jsonify
+from flask import jsonify
 import flask_restplus
 from flask_restplus import Api, Resource, reqparse
 
@@ -24,7 +24,6 @@ def connect_to_ipfs():
 @app.route('/')
 def index():
     return app.send_static_file('index.html')
-
 
 """
 IPNS helpers to resolve, get and update steward index files
@@ -74,7 +73,11 @@ to the ipfs daemon.
 
 @app.route("/ipfs/<string:multihash>")
 def ipfs(multihash):
-    return Response(g.ipfs.cat(multihash))
+    try:
+        r = requests.get("http://ipfs:8080/ipfs/{}".format(multihash), timeout=5.0)
+        return (r.text, r.status_code, r.headers.items())
+    except:
+        return("unreachable", 408)
 
 
 @app.route("/ipns/<string:address>")
