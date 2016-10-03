@@ -14,13 +14,21 @@ clean:
 	sudo rm -rf data/*
 
 ipfs:
-	# Start ipfs daemon (assumes database is already initialized)
-	mkdir -p data
-	docker run -d --name ipfs \
-		-v `pwd`/data:/data/ipfs \
-		-p 8080:8080 \
-		-p 4001:4001 \
-		ipfs/go-ipfs:$(IPFS_VERSION) --migrate=true
+	# Initializing local IPFS daemon and data directory (if not present already)..."
+	if [ -d "data" ]; then \
+        docker run -d --name ipfs \
+            -v `pwd`/data:/data/ipfs \
+            -p 8080:8080 \
+            -p 4001:4001 \
+            ipfs/go-ipfs:v0.4.3 --migrate=true; \
+    else \
+        mkdir -p data/ipfs && chmod -R 777 data && \
+        docker run -d --name ipfs \
+            -v `pwd`/data:/data/ipfs \
+            -p 8080:8080 \
+            -p 4001:4001 \
+            ipfs/go-ipfs:v0.4.3 --init; \
+  fi
 
 reset:
 	# Reset steward to no submissions and no peers and then gc
@@ -50,7 +58,11 @@ push:
 
 run:
 	# Run the latest version from docker hub
-	docker run -d --name cgtd --link ipfs:ipfs -p 80:5000 robcurrie/cgtd:latest
+	docker run -d --name cgtd \
+		--link ipfs:ipfs \
+		-v `pwd`:/app:rw \
+		-p 80:5000 \
+		robcurrie/cgtd:latest
 
 pull:
 	git pull

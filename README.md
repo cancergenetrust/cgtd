@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ga4gh/cgtd.svg?branch=master)](https://travis-ci.org/ga4gh/cgtd)
+
 # Cancer Gene Trust Daemon
 [The Cancer Gene Trust]
 (https://genomicsandhealth.org/work-products-demonstration-projects/cancer-gene-trust)
