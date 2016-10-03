@@ -1,5 +1,5 @@
 # Cancer Gene Trust Daemon
-The Cancer Gene Trust
+[The Cancer Gene Trust]
 (https://genomicsandhealth.org/work-products-demonstration-projects/cancer-gene-trust)
 is a global online network for sharing somatic genomic and clinical data from
 around the world, making the data accessible for research use in real time.
@@ -12,7 +12,7 @@ as the peering relationship between stewards.
 Submissions consist of a JSON manifest with a list of fields and files. Fields
 typically include de-identified clinical data (i.e. tumor type).  Files
 typically consist of somatic variant vcf files and gene expression tsv file.
-Manifest's and files are stored and referenced by the multihash
+Manifest's and files are stored and referenced by the [multihash]
 (https://github.com/jbenet/multihash) of their content.
 
 Eash steward has a top level JSON index file containing it's dns domain, list of
@@ -24,9 +24,9 @@ steward's index file are signed using their private key.  This provides
 authentication and authorization for its contents as well as any other content
 referenced via multihash within it including all submissions.
 
-The current underlying implementation leverages ipfs (http://ipfs.io) for
+The current underlying implementation leverages [ipfs] (http://ipfs.io) for
 storage and replication and ipns for address resolution and public/private key
-operations.  The server is implemented using python and flask
+operations.  The server is implemented using python and [flask]
 (http://flask.pocoo.org/)
 
 # Running a Production Instance
