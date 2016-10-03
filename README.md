@@ -1,26 +1,28 @@
 # Cancer Gene Trust Daemon
+The Cancer Gene Trust
+(https://genomicsandhealth.org/work-products-demonstration-projects/cancer-gene-trust)
+is a global online network for sharing somatic genomic and clinical data from
+around the world, making the data accessible for research use in real time.
 
-Stores steward submissions in a distributed, replicated and decentralized
-content addressable database.  Provides an HTML interface and RESTful API to
-add, list and authenticate submissions as well as the peering relationship
-between stewards.
+The Cancer Gene Trust Daemon (cgtd) stores steward submissions in a distributed,
+replicated and decentralized content addressable database.  It provides an basic
+HTML interface and RESTful API to add, list and authenticate submissions as well
+as the peering relationship between stewards.
 
 Submissions consist of a JSON manifest with a list of fields and files. Fields
 typically include de-identified clinical data (i.e. tumor type).  Files
-typically consist of somatic variant vcf files.  Manifest's and files are
-stored and referenced by the multihash (https://github.com/jbenet/multihash) of
-their content.
+typically consist of somatic variant vcf files and gene expression tsv file.
+Manifest's and files are stored and referenced by the multihash
+(https://github.com/jbenet/multihash) of their content.
 
-Each steward has a public private key pair which is used to authenticate their
-submissions. A steward's address is the multihash of their public key.
-
-Eash steward has a top level JSON index file containing it's dns domain, list
-of submissions by multihash and list of peers by address. A steward's address
-resolves to the multihash of the latest version of its index.
-
-Updates to a steward's index file are signed using their private key.  This
-provides authentication and authorization for its contents as well as any other
-content referenced via multihash within it including all submissions.
+Eash steward has a top level JSON index file containing it's dns domain, list of
+submissions by multihash and list of peers by address.  Each steward has a
+public private key pair which is used to authenticate their submissions. A
+steward's address is the multihash of their public key.  A steward's address
+resolves to the multihash of the latest version of its index.  Updates to a
+steward's index file are signed using their private key.  This provides
+authentication and authorization for its contents as well as any other content
+referenced via multihash within it including all submissions.
 
 The current underlying implementation leverages ipfs (http://ipfs.io) for
 storage and replication and ipns for address resolution and public/private key
@@ -31,13 +33,12 @@ operations.  The server is implemented using python and flask
 
 Note: The only dependencies for the following is make and docker.
 
-Start the ipfs server and store in data/ and generate a default
-configuration and public/private key pair in data/config:
+Start the ipfs server and store in ./data/ and generate a default
+configuration and public/private key pair in ./data/config:
 
     make ipfs 
 
-Reset the steward's index to no submissions, no peers, and a domain of
-lorem.edu:
+Reset the steward's index to no submissions, no peers, set a domain:
 
     DOMAIN=lorem.edu make reset
 
