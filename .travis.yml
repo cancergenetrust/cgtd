@@ -1,0 +1,27 @@
+language: python
+sudo: required
+services:
+  - docker
+
+env:
+  DOCKER_COMPOSE_VERSION: 1.8.0
+
+branches:
+  - master
+  - no_init_bad_port
+python:
+  - '2.7'
+install:
+  - pip install pycodestyle
+  - pip install flake8
+script:
+  - pycodestyle --max-line-length=150 .
+  - make ipfs
+  - sleep 5 # Wait for ipfs docker container init
+  - make reset
+  - make run
+  - make test
+notifications:
+  email: false
+  slack:
+    secure: nqr1C/dGDR9UBCKEgPS1bIeTKFImZNEEv3EdWgTlf0ro5q9EJAIo1qBcDxkhf4ExVgfzlyjkmsMWNkrvCqXm+UtnmM5zOZuG/xtSx1ivkKvEw7XUHq7LnRY7CYvqTW+yrtEer49Dv8vRjb8HCxf5NuKP8Ckcmjnz81yZNL2nBMNffBZf7MB8CTfoqkXs2eKOuR20DYbiVVt+esZP1xBjzvePs+MfGND65fsujFYZUZo1Ic1XrsZ3+Dwj/mAXLEa6Ys925bF3/IZFK9E5PPdk5gcqdJUPtjworD0/Uj9S2nYMpWjskNNJpuuTO4icvBAR3L+SBpkS8muNkUKdxa7K/UyKzRglVo0wM9/0DsRRUIPcVmLa7A5Fq+RVxEyCInwPR0cC7Q1E6gVF6BokGu+S/7wKv8F5K65r9B7pn2BWms0YAiDDi6XshF1r0LPIYQPhJ7CN9GGklnjBghMojx2ovHX0IBnJbMEL1CgDQ+tIy1HrppjelfQ+u7Fi7Hi1bTQ0zEVMvGsGrqzEEYT3FzIrbIIgm87DlyULZshmIH+DiVzazNUYT9zJQRTo7i4zRS2VxCjMSfriQgP7EWh7Y8qvJXai69ILHKtT+thmKcYNpPYmWPlRpqx1Eb+3Aux4+HzLMK9c14MW0wBGo06Aw+vfCB8mN1MEz7blkcKRZDg2SqA=
