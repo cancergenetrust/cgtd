@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ga4gh/cgtd.svg?branch=master)](https://travis-ci.org/ga4gh/cgtd)
+
 # Cancer Gene Trust Daemon
 
 Stores steward submissions in a distributed, replicated and decentralized
