@@ -19,6 +19,7 @@ script:
   - make ipfs
   - sleep 5 # Wait for ipfs docker container init
   - make reset
+  - make build
   - make run
   - make test
 notifications:
