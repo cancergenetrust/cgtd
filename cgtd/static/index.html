@@ -110,7 +110,7 @@
           <li class="list-group-item"><h4>
 					<% if (file.name.endsWith('.vcf')) { %>
           <a class="font-weight-bold m-r-8"
-          href="http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&hgt.customText=http://<%=
+          href="http://genome.ucsc.edu/cgi-bin/hgTracks?hgt.customText=http://<%=
           window.location.host + '/ipfs/' + file.multihash %>">UCSC</a>
 					<% } %>
           <a class="font-weight-bold m-r-8" href="/ipfs/<%= file.multihash %>"><%= file.name %></a>
