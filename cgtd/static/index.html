@@ -20,12 +20,7 @@
 		{
 				position: absolute;
 				width: 100%;
-				left: 0;
 				text-align: center;
-				margin:0 auto;
-		}
-		.navbar-toggle {
-				z-index:3;
 		}
 	</style>
   </head>
@@ -41,17 +36,17 @@
     </div>
 		<nav class="navbar navbar-default">
 			<div class="container-fluid">
+				<div id="title" class="navbar-brand" href="#"></div>
+
 				<div class="navbar-header">
 					<a class="navbar-brand" href="http://www.cancergenetrust.org">
 						<img src="images/logo_with_name.png" style="padding-left: 8px; height: 28px;">
 					</a>
 				</div>
-				<div id="title" class="navbar-brand" href="#">Brand</div>
 
 				<ul class="nav navbar-nav navbar-right">
-          <li><a href="/api#/default"><span class="glyphicon glyphicon-cog"></span></a></li>
+          <li><a href="api#/default"><span class="glyphicon glyphicon-cog"></span></a></li>
 				</ul>
-
 			</div>
 		</nav>
 
@@ -110,7 +105,7 @@
           <li class="list-group-item"><h4>
 					<% if (file.name.endsWith('.vcf')) { %>
           <a class="font-weight-bold m-r-8"
-          href="http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&hgt.customText=http://<%=
+          href="http://genome.ucsc.edu/cgi-bin/hgTracks?hgt.customText=http://<%=
           window.location.host + '/ipfs/' + file.multihash %>">UCSC</a>
 					<% } %>
           <a class="font-weight-bold m-r-8" href="/ipfs/<%= file.multihash %>"><%= file.name %></a>

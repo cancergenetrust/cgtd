@@ -36,7 +36,7 @@ reset:
 	docker exec ipfs sh -c "echo '{\"domain\": \"$(domain)\", \"submissions\": [], \"peers\": []}' | ipfs add -q | xargs ipfs name publish"
 
 build:
-	docker build -t robcurrie/cgtd .
+	docker build -t ga4gh/cgtd .
 
 debug:
 	# Run cgtd out of the current directory with reloading after code change
@@ -45,19 +45,19 @@ debug:
 		-v `pwd`:/app:ro \
 		--link ipfs:ipfs \
 		-p 5000:5000 \
-		robcurrie/cgtd uwsgi --ini uwsgi.ini --python-autoreload=1 --processes=1 --threads=1
+		ga4gh/cgtd uwsgi --ini uwsgi.ini --python-autoreload=1 --processes=1 --threads=1
 
 test:
 	docker exec cgtd py.test -p no:cacheprovider -s -x
 
 run:
 	# Run the latest version from docker hub
-	docker run -d --name cgtd --link ipfs:ipfs -p 80:5000 robcurrie/cgtd
+	docker run -d --name cgtd --link ipfs:ipfs -p 80:5000 ga4gh/cgtd
 
 pull:
 	git pull
 	docker pull ipfs/go-ipfs:$(IPFS_VERSION)
-	docker pull robcurrie/cgtd:latest
+	docker pull ga4gh/cgtd:latest
 
 populate:
 	# Populate with data from the tests folder
