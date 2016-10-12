@@ -1,6 +1,7 @@
 import json
 import requests
 import uuid
+import hashlib
 import ipfsapi
 
 CGT_UCSC_ADDRESS = "QmaWcGneeMEx6unN8iJCVCxP7Qcv4T91pjuZj9drJrdih1"
@@ -87,6 +88,18 @@ def test_submit(server):
                                 "submissions/{}".format(TEST_SUBMISSION)))
     ipfs.pin_rm(TEST_SUBMISSION)
     ipfs.repo_gc()
+
+
+def test_binary_file(server):
+    r = requests.post(url_for(server, "submissions"),
+                      files=[("files[]", ("DO52153_SA570901.tsv.gz",
+                              open("tests/DO52153_SA570901.tsv.gz", "rb")))],
+                      data={"another_key": "another_value", "a_key": "a_value"})
+    assert(r.status_code == requests.codes.ok)
+    r = requests.get("{}/ipfs/QmfDrcUmRbb1Uye4MDmRpHNMrAXoy8BEtJcUHHSY29h4vf".format(server))
+    assert(r.status_code == requests.codes.ok)
+    assert(hashlib.sha256(r.content).hexdigest() ==
+           "f58e05d0e6e77697b9496c306bc7074306ebc2e072c0988328522daca9b3724c")
 
 
 def test_bulk_submit(server):
