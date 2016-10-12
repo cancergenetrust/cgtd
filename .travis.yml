@@ -9,7 +9,7 @@ env:
     - COMMIT=${TRAVIS_COMMIT::8}
 
 after_success:
-  - docker login --username=$DOCKER_USER --password=$DOCKER_PASS
+  - docker login --username="brainstorm" --password="$DOCKER_PASS"
   - export REPO=ga4gh/cgtd
   - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
   - docker build -f Dockerfile -t $REPO:$COMMIT .
