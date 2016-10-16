@@ -67,4 +67,4 @@ submit:
 	# Make a single test submission
 	docker exec -it cgtd curl -X POST localhost:5000/v0/submissions \
         -F "a_field_name=a_field_value" \
-        -F files[]=@tests/ALL/ALL-US__TARGET-10-PAKMVD-09A-01D.vcf
+        -F files[]=@tests/ALL/SSM-PAKMVD-09A-01D.vcf

@@ -103,12 +103,13 @@
         <ul class="list-group">
         <% _.each(files, function(file) { %>
           <li class="list-group-item"><h4>
+          <a class="font-weight-bold m-r-8" href="/ipfs/<%= file.multihash %>"><%= file.name %></a>
 					<% if (file.name.endsWith('.vcf')) { %>
+          &nbsp;
           <a class="font-weight-bold m-r-8"
           href="http://genome.ucsc.edu/cgi-bin/hgTracks?hgt.customText=http://<%=
-          window.location.host + '/ipfs/' + file.multihash %>">UCSC</a>
+          window.location.host + '/ipfs/' + file.multihash %>">View In Browser</a>
 					<% } %>
-          <a class="font-weight-bold m-r-8" href="/ipfs/<%= file.multihash %>"><%= file.name %></a>
           </h4></li>
         <% }) %>
         </ul>

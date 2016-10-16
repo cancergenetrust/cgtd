@@ -22,8 +22,8 @@ for name, fields in submissions.iteritems():
     print(fields["raw_data_accession"])
     r = requests.post("{}/v0/submissions?publish=false".format(args.host),
                       files=[
-                          ("files[]", ("{}.vcf".format(name),
-                                       open("tests/ALL/ALL-US__{}.vcf".format(name), "rb")))],
+                          ("files[]", (fields["vcf_filename"],
+                                       open("tests/ALL/{}".format(fields["vcf_filename"]), "rb")))],
                       data=fields)
     assert(r.status_code == requests.codes.ok)
     submitted.append(json.loads(r.text)["multihash"])

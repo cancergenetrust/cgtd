@@ -56,14 +56,14 @@ def test_peers(server):
 
 
 def test_submit(server):
-    TEST_SUBMISSION = "QmdkAk56NgAnrgTLVBeqwofCu48m2EK5t6eaLG2u1RaaFu"
+    TEST_SUBMISSION = "QmP6BDTNm3yTNdJQK4fJyVE91fiePovrJ8wX4ZHbh6qGjj"
 
     r = requests.post(url_for(server, "submissions"),
                       files=[("files[]",
-                             ("ALL-US__TARGET-10-PAIXPH-03A-01D.vcf",
-                              open("tests/ALL/ALL-US__TARGET-10-PAIXPH-03A-01D.vcf", "rb"))),
-                             ("files[]", ("ALL-US__TARGET-10-PAKHZT-03A-01R.vcf",
-                              open("tests/ALL/ALL-US__TARGET-10-PAKHZT-03A-01R.vcf", "rb")))],
+                             ("SSM-PAIXPH-03A-01D.vcf",
+                              open("tests/ALL/SSM-PAIXPH-03A-01D.vcf", "rb"))),
+                             ("files[]", ("SSM-PAKHZT-03A-01R.vcf",
+                              open("tests/ALL/SSM-PAKHZT-03A-01R.vcf", "rb")))],
                       data={"a_key": "a_value", "another_key": "another_value"})
     assert(r.status_code == requests.codes.ok)
     submission = json.loads(r.text)
@@ -71,10 +71,10 @@ def test_submit(server):
 
     # Make sure order of files and/or fields doesn't matter
     r = requests.post(url_for(server, "submissions"),
-                      files=[("files[]", ("ALL-US__TARGET-10-PAKHZT-03A-01R.vcf",
-                              open("tests/ALL/ALL-US__TARGET-10-PAKHZT-03A-01R.vcf", "rb"))),
-                             ("files[]", ("ALL-US__TARGET-10-PAIXPH-03A-01D.vcf",
-                              open("tests/ALL/ALL-US__TARGET-10-PAIXPH-03A-01D.vcf", "rb")))],
+                      files=[("files[]", ("SSM-PAKHZT-03A-01R.vcf",
+                              open("tests/ALL/SSM-PAKHZT-03A-01R.vcf", "rb"))),
+                             ("files[]", ("SSM-PAIXPH-03A-01D.vcf",
+                              open("tests/ALL/SSM-PAIXPH-03A-01D.vcf", "rb")))],
                       data={"another_key": "another_value", "a_key": "a_value"})
     assert(r.status_code == requests.codes.ok)
     submission = json.loads(r.text)
@@ -108,8 +108,8 @@ def test_bulk_submit(server):
     for i in range(3):
         r = requests.post(url_for(server, "submissions?publish=false"),
                           files=[("files[]",
-                                  ("ALL-US__TARGET-10-PAKHZT-03A-01R.vcf",
-                                   open("tests/ALL/ALL-US__TARGET-10-PAKHZT-03A-01R.vcf", "rb")))],
+                                  ("SSM-PAKHZT-03A-01R.vcf",
+                                   open("tests/ALL/SSM-PAKHZT-03A-01R.vcf", "rb")))],
                           data={"id": str(uuid.uuid4())})
         assert(r.status_code == requests.codes.ok)
         submissions.append(json.loads(r.text)["multihash"])
