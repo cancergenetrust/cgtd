@@ -3,8 +3,7 @@
 # Cancer Gene Trust Daemon
 [The Cancer Gene Trust]
 (https://genomicsandhealth.org/work-products-demonstration-projects/cancer-gene-trust)
-is a global online network for sharing somatic genomic and clinical data from
-around the world, making the data accessible for research use in real time.
+is a simple, real-time, global network for sharing somatic cancer data and associated clinical information.
 
 The Cancer Gene Trust Daemon (cgtd) stores steward submissions in a distributed,
 replicated and decentralized content addressable database.  It provides an basic
@@ -96,3 +95,11 @@ you can make changes and it will live reload.
 To run tests open another terminal window and:
 
     make test
+
+# Links
+Vancouver GA4GH 2016 Presentation: https://goo.gl/F5Asym  
+Overview and White Paper: https://goo.gl/1RyUQ2  
+Github: https://github.com/ga4gh/cgtd  
+Docker: https://hub.docker.com/r/ga4gh/cgtd/  
+Search Example: http://search.cancergenetrust.org  
+Slack: cgt-ga4gh.slack.com  
