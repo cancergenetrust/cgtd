@@ -5,12 +5,25 @@ services:
 
 env:
   DOCKER_COMPOSE_VERSION: 1.8.0
+  global:
+    - COMMIT=${TRAVIS_COMMIT::8}
+
+after_success:
+  - docker login --username="brainstorm" --password="$DOCKER_PASS"
+  - export REPO=ga4gh/cgtd
+  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+  - docker build -f Dockerfile -t $REPO:$COMMIT .
+  - docker tag $REPO:$COMMIT $REPO:$TAG
+  - docker tag $REPO:$COMMIT $REPO:travis-$TRAVIS_BUILD_NUMBER
+  - docker push $REPO
 
 branches:
   - master
   - no_init_bad_port
+
 python:
   - '2.7'
+
 install:
   - pip install pycodestyle
   - pip install flake8
@@ -25,4 +38,4 @@ script:
 notifications:
   email: false
   slack:
-    secure: nqr1C/dGDR9UBCKEgPS1bIeTKFImZNEEv3EdWgTlf0ro5q9EJAIo1qBcDxkhf4ExVgfzlyjkmsMWNkrvCqXm+UtnmM5zOZuG/xtSx1ivkKvEw7XUHq7LnRY7CYvqTW+yrtEer49Dv8vRjb8HCxf5NuKP8Ckcmjnz81yZNL2nBMNffBZf7MB8CTfoqkXs2eKOuR20DYbiVVt+esZP1xBjzvePs+MfGND65fsujFYZUZo1Ic1XrsZ3+Dwj/mAXLEa6Ys925bF3/IZFK9E5PPdk5gcqdJUPtjworD0/Uj9S2nYMpWjskNNJpuuTO4icvBAR3L+SBpkS8muNkUKdxa7K/UyKzRglVo0wM9/0DsRRUIPcVmLa7A5Fq+RVxEyCInwPR0cC7Q1E6gVF6BokGu+S/7wKv8F5K65r9B7pn2BWms0YAiDDi6XshF1r0LPIYQPhJ7CN9GGklnjBghMojx2ovHX0IBnJbMEL1CgDQ+tIy1HrppjelfQ+u7Fi7Hi1bTQ0zEVMvGsGrqzEEYT3FzIrbIIgm87DlyULZshmIH+DiVzazNUYT9zJQRTo7i4zRS2VxCjMSfriQgP7EWh7Y8qvJXai69ILHKtT+thmKcYNpPYmWPlRpqx1Eb+3Aux4+HzLMK9c14MW0wBGo06Aw+vfCB8mN1MEz7blkcKRZDg2SqA=
+    secure: DmhRJVIAOfdPROAYg208v/A2pFyov5YUUD4bYXZK0bQij9wjSVgxVC6SXF9KM4KW96ekIgsy51H1pDUO0XhZCmRZ3/sQm5xleuARgjwuk0sp7+F4w0EnZ0J8UsyyFOTGwHRL2G5/msxUcajlvOGquHmJtugy7AGCMwsBzu5ww3ObPvgvVumd+ZprRX5w4TJPxcSEXu9MQCUXI6fqTt6/lu8XqoQEMFQEdQcUOtAehS2To3jHNPwwkDlD2FQGR36WjIXgzPyYnd+COVVgJn15Or/DZ85+8nmQQszb/IQxsdvf8+DGtmvJxuC58dJjLSFBupCIwfUFLlfVHJDdb2JwuG2RSmizntdYR1sm+HR0eBtLx8ikNanPjlNSheWAvbqOWDnldHgbSzm5Nw0TWDzw4/61beSsvt0w6lP4ac4n6tvMYHiurpKHax8HawHMPZ2yoWtV6y/G8cmVKF67pya4DZOtiWiFiXTetXUhSPXc9Ox/SWZmnEVSbR8AxPEf0D7uNDMeBkOvvwJqHU+73pmola301BcDnnIlJye/00wOBmf+7nGzEgsjd1oTogPC0I9Xn910RvCTXzDCCROKYZZjLy168hxxhDXdAUT36U4CHaXma1TrEn1ehV6dCZUbwmXyap9/bJF4+y3SO+jKHo8dNfluCliubaJgce0ktxFAA/M=
