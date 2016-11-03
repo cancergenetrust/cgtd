@@ -9,17 +9,15 @@ env:
     - COMMIT=${TRAVIS_COMMIT::8}
 
 after_success:
-  - docker login --username="brainstorm" --password="$DOCKER_PASS"
   - export REPO=ga4gh/cgtd
   - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
-  - docker build -f Dockerfile -t $REPO:$COMMIT .
-  - docker tag $REPO:$COMMIT $REPO:$TAG
-  - docker tag $REPO:$COMMIT $REPO:travis-$TRAVIS_BUILD_NUMBER
-  - docker push $REPO
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then docker login --username="$DOCKER_USER" --password="$DOCKER_PASS"; else echo "Foreign pullrequest/branch, not pushing to DockerHub" ; fi 
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then docker build -f Dockerfile -t $REPO:$COMMIT . ; fi
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then docker tag $REPO:$COMMIT $REPO:$TAG ; fi
+  - if [ "$TRAVIS_BRANCH" == "master" ]; docker push $REPO ; fi
 
 branches:
   - master
-  - no_init_bad_port
 
 python:
   - '2.7'
@@ -27,6 +25,7 @@ python:
 install:
   - pip install pycodestyle
   - pip install flake8
+
 script:
   - pycodestyle --max-line-length=150 .
   - make ipfs
@@ -35,6 +34,7 @@ script:
   - make build
   - make run
   - make test
+
 notifications:
   email: false
   slack:
