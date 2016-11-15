@@ -6,9 +6,12 @@
 is a simple, real-time, global network for sharing somatic cancer data and associated clinical information.
 
 The Cancer Gene Trust Daemon (cgtd) stores steward submissions in a distributed,
-replicated and decentralized content addressable database.  It provides an basic
+replicated and decentralized content addressable database.  It provides a basic
 HTML interface and RESTful API to add, list and authenticate submissions as well
-as the peering relationship between stewards.
+as the peering relationship between stewards. 
+
+[search.cancergenetrust.org](http://search.cancergenetrust.org) is an example search
+engine accross all current stewards that builds a searchable index with network viewer.
 
 Submissions consist of a JSON manifest with a list of fields and files. Fields
 typically include de-identified clinical data (i.e. tumor type).  Files
