@@ -14,7 +14,7 @@ after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then docker login --username="$DOCKER_USER" --password="$DOCKER_PASS"; else echo "Foreign pullrequest/branch, not pushing to DockerHub" ; fi 
   - if [ "$TRAVIS_BRANCH" == "master" ]; then docker build -f Dockerfile -t $REPO:$COMMIT . ; fi
   - if [ "$TRAVIS_BRANCH" == "master" ]; then docker tag $REPO:$COMMIT $REPO:$TAG ; fi
-  - if [ "$TRAVIS_BRANCH" == "master" ]; docker push $REPO ; fi
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then docker push $REPO ; fi
 
 branches:
   - master
