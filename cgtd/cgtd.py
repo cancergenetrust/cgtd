@@ -25,6 +25,7 @@ def connect_to_ipfs():
 def index():
     return app.send_static_file('index.html')
 
+
 """
 IPNS helpers to resolve, get and update steward index files
 """
@@ -318,6 +319,7 @@ class SubmissionAPI(Resource):
         update_steward(steward)
         logging.info("{} removed from submissions".format(multihash))
         return {'message': "{} removed from submissions".format(multihash)}
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
