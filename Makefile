@@ -1,4 +1,4 @@
-IPFS_VERSION := v0.4.3
+IPFS_VERSION := release
 
 ifdef DOMAIN
 	domain=$$DOMAIN
