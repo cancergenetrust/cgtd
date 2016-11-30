@@ -88,8 +88,10 @@ Build a local cgtd docker container:
 
     make build
 
-Start a cgtd container linked to the ipfs container:
+Start ipfs, initialize, and start a cgtd container in debug:
 
+    make ipfs
+    make reset
     make debug
 
 This runs the cgtd container listening on port 5000 out of the local folder so
