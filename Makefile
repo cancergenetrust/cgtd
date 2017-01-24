@@ -7,8 +7,9 @@ else
 endif
 
 stop:
-	docker stop cgtd || true && docker rm cgtd || true
-	docker stop ipfs || true && docker rm ipfs || true
+	# docker stop cgtd || true && docker rm cgtd || true
+	# docker stop ipfs || true && docker rm ipfs || true
+	docker-compose down
 
 clean:
 	sudo rm -rf data/*
@@ -52,7 +53,8 @@ test:
 
 run:
 	# Run the latest version from docker hub
-	docker run -d --name cgtd --link ipfs:ipfs -p 80:5000 ga4gh/cgtd
+	# docker run -d --name cgtd --link ipfs:ipfs -p 80:5000 ga4gh/cgtd
+	docker-compose up
 
 pull:
 	git pull

@@ -1,0 +1,28 @@
+version: '2'
+
+volumes:
+  postgres:
+
+services:
+  db:
+    image: postgres:9.6-alpine
+    environment:
+      POSTGRES_PASSWORD: gi123
+      POSTGRES_USER: spinnaker
+      POSTGRES_DB: spinnaker
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  spinnaker:
+    build: .
+    image: quay.io/ucsc_cgl/dcc-spinnaker
+    volumes:
+      - .:/app
+    environment:
+      UCSC_STORAGE_TOKEN:
+      FLASK_DEBUG: 1
+    ports:
+      - "5000:5000"
+    links:
+      - db
+    command: uwsgi --ini uwsgi.ini --honour-stdin --python-autoreload=1 --processes=1 --threads=1
