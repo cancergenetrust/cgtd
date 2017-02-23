@@ -34,7 +34,7 @@ ipfs:
 reset:
 	# Reset steward to no submissions and no peers and then gc
 	echo "Resetting steward to no submissions, no peers, and domain = $(domain)"
-	docker exec ipfs sh -c "echo '{\"domain\": \"$(domain)\", \"submissions\": [], \"peers\": []}' | ipfs add -q | xargs ipfs name publish"
+	docker exec cgtd_ipfs_1 sh -c "echo '{\"domain\": \"$(domain)\", \"submissions\": [], \"peers\": []}' | ipfs add -q | xargs ipfs name publish"
 
 build:
 	docker build -t ga4gh/cgtd .
