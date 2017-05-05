@@ -1,28 +1,28 @@
 version: '2'
 
 volumes:
-  postgres:
+  ipfs:
 
 services:
-  db:
-    image: postgres:9.6-alpine
-    environment:
-      POSTGRES_PASSWORD: gi123
-      POSTGRES_USER: spinnaker
-      POSTGRES_DB: spinnaker
+  ipfs:
+    image: ipfs/go-ipfs:release
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - ipfs:/data/ipfs
+    ports:
+      - "8080:8080"
+      - "4001:4001"
 
-  spinnaker:
-    build: .
-    image: quay.io/ucsc_cgl/dcc-spinnaker
-    volumes:
-      - .:/app
+  cgtd:
+    image: ga4gh/cgtd
     environment:
-      UCSC_STORAGE_TOKEN:
-      FLASK_DEBUG: 1
+      DOMAIN:
     ports:
       - "5000:5000"
     links:
-      - db
-    command: uwsgi --ini uwsgi.ini --honour-stdin --python-autoreload=1 --processes=1 --threads=1
+      - ipfs
+
+    # Build and run out of local directory with auto-reload
+    build: .
+    volumes:
+      - .:/usr/src/app
+    command: --python-autoreload=1 --processes=1 --threads=1

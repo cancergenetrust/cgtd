@@ -36,6 +36,9 @@ reset:
 	echo "Resetting steward to no submissions, no peers, and domain = $(domain)"
 	docker exec cgtd_ipfs_1 sh -c "echo '{\"domain\": \"$(domain)\", \"submissions\": [], \"peers\": []}' | ipfs add -q | xargs ipfs name publish"
 
+	# Install private network ip filters so we don't get acccused of running netscan...
+	docker exec -it cgtd_ipfs_1 ipfs swarm filters add /ip4/10.0.0.0/ipcidr/8 /ip4/172.16.0.0/ipcidr/12 /ip4/192.168.0.0/ipcidr/16 /ip4/100.64.0.0/ipcidr/10
+
 build:
 	docker build -t ga4gh/cgtd .
 
