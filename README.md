@@ -1,8 +1,7 @@
 [![Build Status](https://travis-ci.org/ga4gh/cgtd.svg?branch=master)](https://travis-ci.org/ga4gh/cgtd)
 
 # Cancer Gene Trust Daemon
-[The Cancer Gene Trust]
-(https://genomicsandhealth.org/work-products-demonstration-projects/cancer-gene-trust)
+[The Cancer Gene Trust](https://genomicsandhealth.org/work-products-demonstration-projects/cancer-gene-trust)
 is a simple, real-time, global network for sharing somatic cancer data and associated clinical information.
 
 The Cancer Gene Trust Daemon (cgtd) stores steward submissions in a distributed,
@@ -16,8 +15,7 @@ engine accross all current stewards that builds a searchable index with network 
 Submissions consist of a JSON manifest with a list of fields and files. Fields
 typically include de-identified clinical data (i.e. tumor type).  Files
 typically consist of somatic variant vcf files and gene expression tsv file.
-Manifest's and files are stored and referenced by the [multihash]
-(https://github.com/jbenet/multihash) of their content.
+Manifest's and files are stored and referenced by the [multihash](https://github.com/jbenet/multihash) of their content.
 
 Eash steward has a top level JSON index file containing it's dns domain, list of
 submissions by multihash and list of peers by address.  Each steward has a
@@ -28,10 +26,9 @@ steward's index file are signed using their private key.  This provides
 authentication and authorization for its contents as well as any other content
 referenced via multihash within it including all submissions.
 
-The current underlying implementation leverages [ipfs] (http://ipfs.io) for
+The current underlying implementation leverages [ipfs](http://ipfs.io) for
 storage and replication and ipns for address resolution and public/private key
-operations.  The server is implemented using python and [flask]
-(http://flask.pocoo.org/)
+operations.  The server is implemented using python and [flask](http://flask.pocoo.org/)
 
 # Running a Production Instance
 
