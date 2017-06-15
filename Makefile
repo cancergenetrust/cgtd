@@ -17,7 +17,7 @@ down:
 	docker-compose down
 
 clean:
-	docker volume rm -q cgtd_ipfs
+	docker volume rm cgtd_ipfs
 
 test:
 	docker exec cgtd_cgtd_1 py.test -p no:cacheprovider -s -x
