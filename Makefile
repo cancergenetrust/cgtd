@@ -8,7 +8,7 @@ build:
 	docker-compose -f docker-compose-debug.yml build
 
 up:
-	docker-compose up
+	docker-compose up -d
 
 debug:
 	docker-compose -f docker-compose-debug.yml up
