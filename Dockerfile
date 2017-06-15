@@ -17,4 +17,4 @@ ADD . /app
 
 EXPOSE 5000
 
-CMD uwsgi --ini uwsgi.ini
+ENTRYPOINT ["uwsgi", "--ini", "uwsgi.ini"]
