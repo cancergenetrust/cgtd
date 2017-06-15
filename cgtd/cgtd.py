@@ -77,7 +77,7 @@ def ipfs(multihash):
     try:
         r = requests.get("http://ipfs:8080/ipfs/{}".format(multihash), timeout=5.0)
         return (r.content, r.status_code, r.headers.items())
-    except:
+    except Exception as e:
         return("unreachable", 408)
 
 
@@ -86,7 +86,7 @@ def ipns(address):
     try:
         r = requests.get("http://ipfs:8080/ipns/{}".format(address), timeout=5.0)
         return (r.content, r.status_code, r.headers.items())
-    except:
+    except Exception as e:
         return("unreachable", 408)
 
 
