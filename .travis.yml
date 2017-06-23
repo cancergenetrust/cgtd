@@ -5,18 +5,6 @@ sudo: required
 services:
   - docker
 
-env:
-  global:
-    - COMMIT=${TRAVIS_COMMIT::8}
-
-after_success:
-  - export REPO=ga4gh/cgtd
-  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then docker login --username="$DOCKER_USER" --password="$DOCKER_PASS"; else echo "Foreign pullrequest/branch, not pushing to DockerHub" ; fi 
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then docker build -f Dockerfile -t $REPO:$COMMIT . ; fi
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then docker tag $REPO:$COMMIT $REPO:$TAG ; fi
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then docker push $REPO ; fi
-
 python:
   - '2.7'
 
