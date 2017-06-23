@@ -1,0 +1,28 @@
+version: '2'
+
+volumes:
+  ipfs:
+
+services:
+  ipfs:
+    image: ipfs/go-ipfs:release
+    volumes:
+      - ipfs:/data/ipfs
+    ports:
+      - "8080:8080"
+      - "4001:4001"
+
+  cgtd:
+    image: ga4gh/cgtd
+    environment:
+      DOMAIN:
+    ports:
+      - "5000:5000"
+    links:
+      - ipfs
+
+    # Build and run out of local directory with auto-reload
+    build: .
+    volumes:
+      - .:/usr/src/app
+    command: --touch-reload=/usr/src/app/cgtd/cgtd.py --processes=1 --threads=1

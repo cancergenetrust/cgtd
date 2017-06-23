@@ -1,23 +1,9 @@
 language: python
+
 sudo: required
+
 services:
   - docker
-
-env:
-  DOCKER_COMPOSE_VERSION: 1.8.0
-  global:
-    - COMMIT=${TRAVIS_COMMIT::8}
-
-after_success:
-  - export REPO=ga4gh/cgtd
-  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then docker login -u $DOCKER_USER -p $DOCKER_PASS; else echo "Foreign pullrequest/branch, not pushing to DockerHub" ; fi
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then docker build -f Dockerfile -t $REPO:$COMMIT . ; fi
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then docker tag $REPO:$COMMIT $REPO:$TAG ; fi
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then docker push $REPO ; fi
-
-branches:
-  - master
 
 python:
   - '2.7'
@@ -28,11 +14,10 @@ install:
 
 script:
   - pycodestyle --max-line-length=150 .
-  - make ipfs
+  - make build
+  - make up
   - sleep 5 # Wait for ipfs docker container init
   - make reset
-  - make build
-  - make run
   - make test
 
 notifications:

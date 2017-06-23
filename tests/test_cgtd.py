@@ -4,7 +4,7 @@ import uuid
 import hashlib
 import ipfsapi
 
-CGT_UCSC_ADDRESS = "QmaWcGneeMEx6unN8iJCVCxP7Qcv4T91pjuZj9drJrdih1"
+CGT_UCSF_ADDRESS = "QmY96gKPRbQNaSDB2cZCWBriz9n5Ryisygo8DCCuDxSFqs"
 
 
 ipfs = ipfsapi.Client("ipfs", 5001)
@@ -44,15 +44,15 @@ def test_steward(server):
 
 def test_peers(server):
     # Delete it to make sure its not there
-    r = requests.delete(url_for(server, "peers/{}".format(CGT_UCSC_ADDRESS)))
-    assert(CGT_UCSC_ADDRESS not in get_latest_index(server)["peers"])
+    r = requests.delete(url_for(server, "peers/{}".format(CGT_UCSF_ADDRESS)))
+    assert(CGT_UCSF_ADDRESS not in get_latest_index(server)["peers"])
 
-    r = requests.post(url_for(server, "peers/{}".format(CGT_UCSC_ADDRESS)))
+    r = requests.post(url_for(server, "peers/{}".format(CGT_UCSF_ADDRESS)))
     assert(r.status_code == requests.codes.ok)
-    assert(CGT_UCSC_ADDRESS in get_latest_index(server)["peers"])
+    assert(CGT_UCSF_ADDRESS in get_latest_index(server)["peers"])
 
-    r = requests.delete(url_for(server, "peers/{}".format(CGT_UCSC_ADDRESS)))
-    assert(CGT_UCSC_ADDRESS not in get_latest_index(server)["peers"])
+    r = requests.delete(url_for(server, "peers/{}".format(CGT_UCSF_ADDRESS)))
+    assert(CGT_UCSF_ADDRESS not in get_latest_index(server)["peers"])
 
 
 def test_submit(server):

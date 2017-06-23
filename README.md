@@ -10,7 +10,7 @@ HTML interface and RESTful API to add, list and authenticate submissions as well
 as the peering relationship between stewards. 
 
 [search.cancergenetrust.org](http://search.cancergenetrust.org) is an example search
-engine accross all current stewards that builds a searchable index with network viewer.
+engine across all current stewards that builds a searchable index with network viewer.
 
 Submissions consist of a JSON manifest with a list of fields and files. Fields
 typically include de-identified clinical data (i.e. tumor type).  Files
@@ -32,20 +32,15 @@ operations.  The server is implemented using python and [flask](http://flask.poc
 
 # Running a Production Instance
 
-Note: The only dependencies for the following is make and docker.
+Note: The only dependencies for the following is make and docker-compose
 
-Start the ipfs server and store in ./data/ and generate a default
-configuration and public/private key pair in ./data/config:
+Start cgtd and ipfs daemons with data stored in a docker volume:
 
-    make ipfs 
+    make up
 
 Reset the steward's index to no submissions, no peers, set a domain:
 
     DOMAIN=lorem.edu make reset
-
-Startup the cgtd container listening on port 80:
-
-    make run
 
 To verify both cgtd and ipfs are working you can query your steward's address:
 
@@ -85,10 +80,8 @@ Build a local cgtd docker container:
 
     make build
 
-Start ipfs, initialize, and start a cgtd container in debug:
+Start cgtd running using the local code with auto-reload:
 
-    make ipfs
-    make reset
     make debug
 
 This runs the cgtd container listening on port 5000 out of the local folder so
