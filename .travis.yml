@@ -19,8 +19,3 @@ script:
   - sleep 5 # Wait for ipfs docker container init
   - make reset
   - make test
-
-notifications:
-  email: false
-  slack:
-    secure: DmhRJVIAOfdPROAYg208v/A2pFyov5YUUD4bYXZK0bQij9wjSVgxVC6SXF9KM4KW96ekIgsy51H1pDUO0XhZCmRZ3/sQm5xleuARgjwuk0sp7+F4w0EnZ0J8UsyyFOTGwHRL2G5/msxUcajlvOGquHmJtugy7AGCMwsBzu5ww3ObPvgvVumd+ZprRX5w4TJPxcSEXu9MQCUXI6fqTt6/lu8XqoQEMFQEdQcUOtAehS2To3jHNPwwkDlD2FQGR36WjIXgzPyYnd+COVVgJn15Or/DZ85+8nmQQszb/IQxsdvf8+DGtmvJxuC58dJjLSFBupCIwfUFLlfVHJDdb2JwuG2RSmizntdYR1sm+HR0eBtLx8ikNanPjlNSheWAvbqOWDnldHgbSzm5Nw0TWDzw4/61beSsvt0w6lP4ac4n6tvMYHiurpKHax8HawHMPZ2yoWtV6y/G8cmVKF67pya4DZOtiWiFiXTetXUhSPXc9Ox/SWZmnEVSbR8AxPEf0D7uNDMeBkOvvwJqHU+73pmola301BcDnnIlJye/00wOBmf+7nGzEgsjd1oTogPC0I9Xn910RvCTXzDCCROKYZZjLy168hxxhDXdAUT36U4CHaXma1TrEn1ehV6dCZUbwmXyap9/bJF4+y3SO+jKHo8dNfluCliubaJgce0ktxFAA/M=
