@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/ga4gh/cgtd.svg?branch=master)](https://travis-ci.org/ga4gh/cgtd)
 
 # Cancer Gene Trust Daemon
-[The Cancer Gene Trust](https://genomicsandhealth.org/work-products-demonstration-projects/cancer-gene-trust)
+[The Cancer Gene Trust](http://www.cancergenetrust.org)
 is a simple, real-time, global network for sharing somatic cancer data and associated clinical information.
 
 The Cancer Gene Trust Daemon (cgtd) stores steward submissions in a distributed,
@@ -90,11 +90,3 @@ you can make changes and it will live reload.
 To run tests open another terminal window and:
 
     make test
-
-# Links
-Vancouver GA4GH 2016 Presentation: https://goo.gl/F5Asym  
-Overview and White Paper: https://goo.gl/1RyUQ2  
-Github: https://github.com/ga4gh/cgtd  
-Docker: https://hub.docker.com/r/ga4gh/cgtd/  
-Search Example: http://search.cancergenetrust.org  
-Slack: cgt-ga4gh.slack.com  
