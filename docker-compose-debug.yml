@@ -5,7 +5,7 @@ volumes:
 
 services:
   ipfs:
-    image: ipfs/go-ipfs:v0.4.11
+    image: ipfs/go-ipfs:v0.4.10
     volumes:
       - ipfs:/data/ipfs
     ports:
@@ -24,5 +24,5 @@ services:
     # Build and run out of local directory with auto-reload
     build: .
     volumes:
-      - .:/usr/src/app
-    command: --touch-reload=/usr/src/app/cgtd/cgtd.py --processes=1 --threads=1
+      - .:/app
+    command: --touch-reload=/app/cgtd/cgtd.py --processes=1 --threads=1

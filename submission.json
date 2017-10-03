@@ -1,0 +1,504 @@
+{
+	"patientId": "123",
+	"clinical": {
+		"Age at Dx": "6",
+		"Chemotherapy, At UCSF": "NONE, NOT PLANNED",
+		"Comorbid/Complication 1": "NO SECONDARY DX DOCUMENTD",
+		"Comorbid/Complication 10": "NONE",
+		"Comorbid/Complication 2": "NONE",
+		"Comorbid/Complication 3": "NONE",
+		"Comorbid/Complication 4": "NONE",
+		"Comorbid/Complication 5": "NONE",
+		"Comorbid/Complication 6": "NONE",
+		"Comorbid/Complication 7": "NONE",
+		"Comorbid/Complication 8": "NONE",
+		"Comorbid/Complication 9": "NONE",
+		"Case Completed Days from First Contact": "334",
+		"Year First Contact": "1996",
+		"Last Contact or Death Days from First Contact": "412",
+		"Last Tumor Status Days from First Contact": "412",
+		"No Treatment Decision Days from First Contact": "",
+		"Diagnosis Days from First Contact": "0",
+		"Recurrence Days from First Contact": "",
+		"Grade Path System": "NONE()",
+		"Grade Path Value": "NONE()",
+		"Grade/Differentiation": "WELL DIFFERENTIATED",
+		"Hist/Behav": "PILOCYTIC ASTROCYTOMA",
+		"Histology/Behavior (ICD-O-3)": "94213",
+		"Hormone, At UCSF": "NONE, NOT PLANNED",
+		"Hormone Started Days from First Contact": "",
+		"Immunotherapy, At UCSF": "NONE, NOT PLANNED",
+		"Immunotherapy Days Started from First Contact": "",
+		"Radiation, At UCSF": "NONE",
+		"Radiation Days Started from First Contact": "",
+		"Earliest 1st Course RX Days from First Contact": "0",
+		"Last 1st Course RX Days from First Contact": "0",
+		"Sex": "MALE",
+		"Site - Primary": "C716 (CEREBELLUM NOS)",
+		"Site, Group (SEER)": "Brain(31010)",
+		"Casefinding Source": "PATH/AUTOPSY/CYTOLOGY (H)(20)",
+		"Summary of RX, 1st Course": "SURGERY",
+		"Summary of RX, 1st Course UCSF": "NONE",
+		"Summary of RX, 2nd Course": "ERROR",
+		"Summary of RX, 3rd Course": "ERROR",
+		"Summary of RX, 4th Course": "ERROR",
+		"Summary of RX, 5th Course": "ERROR",
+		"Summary of RX, 6th Course": "ERROR",
+		"Summary of RX, 7th Course": "ERROR",
+		"Surgery of Primary Site, Proc 1": "LOCAL EXCISION OF TUMOR; EXCISIONAL BIOPSY",
+		"Surgery of Primary Site, Proc 2": "NONE; AUTOPSY ONLY",
+		"Surgery of Primary Site, Proc 3": "NONE; AUTOPSY ONLY",
+		"Surgery to Other Sites, At UCSF": "NONE",
+		"Surgery Most Definitive RX Days from First Contact": "0",
+		"Surgery First Course Days from First Contact": "0",
+		"Surgery, Primary Site, at UCSF": "NONE; AUTOPSY ONLY",
+		"Surgery Proc 1 RX Days from First Contact": "0",
+		"Surgery, Proc 1, Hospital of RX": "VALLEY CHILDRENS (OLD)",
+		"Surgery Proc 2 RX Days from First Contact": "",
+		"Surgery, Proc 2, Hospital of RX": "UNREFERRED PATIENT",
+		"Surgery Proc 3 RX Days from First Contact": "",
+		"Surgery, Proc 3, Hospital of RX": "UNREFERRED PATIENT",
+		"Suspense Flag": "COMPLETE",
+		"Systemic/Surgery Sequence": "NONE",
+		"TNM, Clin, Staged By": "NOT ELIGIBLE",
+		"TNM, Mixed Stage": "NOT APPLIC",
+		"TNM, Mixed Stage, Staged By": "NOT ELIGIBLE(88)",
+		"TNM, Path, Staged By": "NOT ELIGIBLE(88)",
+		"TNM/CS Stage": "88",
+		"TNM/Derived Stage": "NOT APPLIC",
+		"Transplant/Endocrine, At UCSF": "NONE; NOT APPLICABLE",
+		"Tumor Marker 1(ERA,CEA,AFP,Urine": "UNKNOWN, NO INFORMATION",
+		"Tumor Marker 2(PRA, PSA, hCG)": "UNKNOWN, NO INFORMATION",
+		"Tumor Status": "NOT FREE THIS TUMOR",
+		"Type Last Cancer Follow-up": "PHYSICIAN",
+		"Type of Admission": "INPATIENT ONLY",
+		"Type of Last Patient Follow-up": "PHYSICIAN",
+		"Vital Status": "ALIVE",
+		"Year First Seen at UCSF": "1996"
+	},
+	"genomic": {
+		"_attributes": {
+			"xmlns": "http://foundationmedicine.com/compbio/variant-report-external",
+			"xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+			"disease": "BREAST",
+			"disease-ontology": "Breast carcinoma (NOS)",
+			"flowcell-analysis": "10890",
+			"gender": "female",
+			"pathology-diagnosis": "Invasive ductal carcinoma; Hx. breast ca",
+			"percent-tumor-nuclei": "70",
+			"pipeline-version": "v2.8.1",
+			"purity-assessment": "67",
+			"specimen": "SMP60684.01",
+			"study": "CLINICAL-T7",
+			"test-request": "SMP60684",
+			"test-type": "FoundationOne",
+			"tissue-of-origin": "Breast",
+			"xsi:schemaLocation": "http://foundationmedicine.com/compbio/variant-report-external http://www.foundationmedicine.com/compbio/variant-report-external-2.2.xsd"
+		},
+		"samples": {
+			"sample": {
+				"_attributes": {
+					"bait-set": "T7",
+					"mean-exon-depth": "702.14",
+					"name": "SA-1802186",
+					"nucleic-acid-type": "DNA"
+				}
+			}
+		},
+		"quality-control": {
+			"_attributes": {
+				"status": "Pass"
+			}
+		},
+		"short-variants": {
+			"short-variant": [
+				{
+					"_attributes": {
+						"allele-fraction": "0.5225",
+						"cds-effect": "1633G>A",
+						"depth": "934",
+						"equivocal": "false",
+						"functional-effect": "missense",
+						"gene": "PIK3CA",
+						"percent-reads": "52.25",
+						"position": "chr3:178936091",
+						"protein-effect": "E545K",
+						"status": "known",
+						"strand": "+",
+						"transcript": "NM_006218"
+					},
+					"dna-evidence": {
+						"_attributes": {
+							"sample": "SA-1802186"
+						}
+					}
+				},
+				{
+					"_attributes": {
+						"allele-fraction": "0.7077",
+						"cds-effect": "6997_6998insA",
+						"depth": "455",
+						"equivocal": "false",
+						"functional-effect": "frameshift",
+						"gene": "ATM",
+						"percent-reads": "70.77",
+						"position": "chr11:108198393",
+						"protein-effect": "T2333fs*40",
+						"status": "likely",
+						"strand": "+",
+						"transcript": "NM_000051"
+					},
+					"dna-evidence": {
+						"_attributes": {
+							"sample": "SA-1802186"
+						}
+					}
+				},
+				{
+					"_attributes": {
+						"allele-fraction": "0.8426",
+						"cds-effect": "5272A>G",
+						"depth": "775",
+						"equivocal": "false",
+						"functional-effect": "missense",
+						"gene": "BRCA2",
+						"percent-reads": "84.26",
+						"position": "chr13:32913764",
+						"protein-effect": "N1758D",
+						"status": "unknown",
+						"strand": "+",
+						"transcript": "NM_000059"
+					},
+					"dna-evidence": {
+						"_attributes": {
+							"sample": "SA-1802186"
+						}
+					}
+				},
+				{
+					"_attributes": {
+						"allele-fraction": "0.7276",
+						"cds-effect": "438G>T",
+						"depth": "1696",
+						"equivocal": "false",
+						"functional-effect": "missense",
+						"gene": "DOT1L",
+						"percent-reads": "72.76",
+						"position": "chr19:2191184",
+						"protein-effect": "Q146H",
+						"status": "unknown",
+						"strand": "+",
+						"transcript": "NM_032482"
+					},
+					"dna-evidence": {
+						"_attributes": {
+							"sample": "SA-1802186"
+						}
+					}
+				},
+				{
+					"_attributes": {
+						"allele-fraction": "0.6423",
+						"cds-effect": "1216A>G",
+						"depth": "615",
+						"equivocal": "false",
+						"functional-effect": "missense",
+						"gene": "ERBB2",
+						"percent-reads": "64.23",
+						"position": "chr17:37871606",
+						"protein-effect": "I406V",
+						"status": "unknown",
+						"strand": "+",
+						"transcript": "NM_004448"
+					},
+					"dna-evidence": {
+						"_attributes": {
+							"sample": "SA-1802186"
+						}
+					}
+				},
+				{
+					"_attributes": {
+						"allele-fraction": "0.7311",
+						"cds-effect": "388G>A",
+						"depth": "1227",
+						"equivocal": "false",
+						"functional-effect": "missense",
+						"gene": "HSD3B1",
+						"percent-reads": "73.11",
+						"position": "chr1:120056534",
+						"protein-effect": "G130R",
+						"status": "unknown",
+						"strand": "+",
+						"transcript": "NM_000862"
+					},
+					"dna-evidence": {
+						"_attributes": {
+							"sample": "SA-1802186"
+						}
+					}
+				},
+				{
+					"_attributes": {
+						"allele-fraction": "0.4886",
+						"cds-effect": "2062_2063insA",
+						"depth": "616",
+						"equivocal": "false",
+						"functional-effect": "frameshift",
+						"gene": "HSP90AA1",
+						"percent-reads": "48.86",
+						"position": "chr14:102549429",
+						"protein-effect": "T688fs*4",
+						"status": "unknown",
+						"strand": "-",
+						"transcript": "NM_001017963"
+					},
+					"dna-evidence": {
+						"_attributes": {
+							"sample": "SA-1802186"
+						}
+					}
+				},
+				{
+					"_attributes": {
+						"allele-fraction": "0.8137",
+						"cds-effect": "3202G>A",
+						"depth": "306",
+						"equivocal": "false",
+						"functional-effect": "missense",
+						"gene": "IRS2",
+						"percent-reads": "81.37",
+						"position": "chr13:110435199",
+						"protein-effect": "D1068N",
+						"status": "unknown",
+						"strand": "-",
+						"transcript": "NM_003749"
+					},
+					"dna-evidence": {
+						"_attributes": {
+							"sample": "SA-1802186"
+						}
+					}
+				},
+				{
+					"_attributes": {
+						"allele-fraction": "0.4707",
+						"cds-effect": "961C>T",
+						"depth": "903",
+						"equivocal": "false",
+						"functional-effect": "missense",
+						"gene": "MDM2",
+						"percent-reads": "47.07",
+						"position": "chr12:69233096",
+						"protein-effect": "L321F",
+						"status": "unknown",
+						"strand": "+",
+						"transcript": "NM_002392"
+					},
+					"dna-evidence": {
+						"_attributes": {
+							"sample": "SA-1802186"
+						}
+					}
+				},
+				{
+					"_attributes": {
+						"allele-fraction": "0.5936",
+						"cds-effect": "1613G>A",
+						"depth": "342",
+						"equivocal": "false",
+						"functional-effect": "missense",
+						"gene": "NTRK3",
+						"percent-reads": "59.36",
+						"position": "chr15:88524564",
+						"protein-effect": "G538E",
+						"status": "unknown",
+						"strand": "-",
+						"transcript": "NM_001007156"
+					},
+					"dna-evidence": {
+						"_attributes": {
+							"sample": "SA-1802186"
+						}
+					}
+				}
+			]
+		},
+		"copy-number-alterations": {
+			"copy-number-alteration": [
+				{
+					"_attributes": {
+						"copy-number": "7",
+						"equivocal": "true",
+						"gene": "BCL2L1",
+						"number-of-exons": "4 of 4",
+						"position": "chr20:30253751-30310021",
+						"ratio": "1.67",
+						"status": "known",
+						"type": "amplification"
+					},
+					"dna-evidence": {
+						"_attributes": {
+							"sample": "SA-1802186"
+						}
+					}
+				},
+				{
+					"_attributes": {
+						"copy-number": "7",
+						"equivocal": "true",
+						"gene": "MYST3",
+						"number-of-exons": "16 of 16",
+						"position": "chr8:41789722-41906495",
+						"ratio": "1.79",
+						"status": "known",
+						"type": "amplification"
+					},
+					"dna-evidence": {
+						"_attributes": {
+							"sample": "SA-1802186"
+						}
+					}
+				},
+				{
+					"_attributes": {
+						"copy-number": "11",
+						"equivocal": "false",
+						"gene": "RNF43",
+						"number-of-exons": "9 of 9",
+						"position": "chr17:56432260-56492938",
+						"ratio": "3.05",
+						"status": "unknown",
+						"type": "amplification"
+					},
+					"dna-evidence": {
+						"_attributes": {
+							"sample": "SA-1802186"
+						}
+					}
+				},
+				{
+					"_attributes": {
+						"copy-number": "7",
+						"equivocal": "true",
+						"gene": "PRKAR1A",
+						"number-of-exons": "10 of 10",
+						"position": "chr17:66511540-66526590",
+						"ratio": "2.11",
+						"status": "unknown",
+						"type": "amplification"
+					},
+					"dna-evidence": {
+						"_attributes": {
+							"sample": "SA-1802186"
+						}
+					}
+				},
+				{
+					"_attributes": {
+						"copy-number": "13",
+						"equivocal": "false",
+						"gene": "SOX9",
+						"number-of-exons": "3 of 3",
+						"position": "chr17:70117532-70120528",
+						"ratio": "3.51",
+						"status": "unknown",
+						"type": "amplification"
+					},
+					"dna-evidence": {
+						"_attributes": {
+							"sample": "SA-1802186"
+						}
+					}
+				},
+				{
+					"_attributes": {
+						"copy-number": "7",
+						"equivocal": "true",
+						"gene": "PIK3R2",
+						"number-of-exons": "15 of 15",
+						"position": "chr19:18263166-18286555",
+						"ratio": "1.92",
+						"status": "unknown",
+						"type": "amplification"
+					},
+					"dna-evidence": {
+						"_attributes": {
+							"sample": "SA-1802186"
+						}
+					}
+				},
+				{
+					"_attributes": {
+						"copy-number": "8",
+						"equivocal": "false",
+						"gene": "HSD3B1",
+						"number-of-exons": "3 of 3",
+						"position": "chr1:120050099-120057268",
+						"ratio": "1.88",
+						"status": "unknown",
+						"type": "amplification"
+					},
+					"dna-evidence": {
+						"_attributes": {
+							"sample": "SA-1802186"
+						}
+					}
+				},
+				{
+					"_attributes": {
+						"copy-number": "8",
+						"equivocal": "false",
+						"gene": "NOTCH2",
+						"number-of-exons": "34 of 34",
+						"position": "chr1:120457928-120612048",
+						"ratio": "2.19",
+						"status": "unknown",
+						"type": "amplification"
+					},
+					"dna-evidence": {
+						"_attributes": {
+							"sample": "SA-1802186"
+						}
+					}
+				}
+			]
+		},
+		"rearrangements": {
+			"rearrangement": {
+				"_attributes": {
+					"description": "rearrangement",
+					"equivocal": "false",
+					"in-frame": "unknown",
+					"other-gene": "ARL3",
+					"pos1": "chr10:104352460-104352621",
+					"pos2": "chr10:104447208-104447553",
+					"status": "unknown",
+					"supporting-read-pairs": "84",
+					"targeted-gene": "SUFU",
+					"type": "rearrangement"
+				},
+				"dna-evidence": {
+					"_attributes": {
+						"sample": "SA-1802186"
+					}
+				}
+			}
+		},
+		"biomarkers": {
+			"microsatellite-instability": {
+				"_attributes": {
+					"status": "MSS"
+				}
+			},
+			"tumor-mutation-burden": {
+				"_attributes": {
+					"score": "8.77",
+					"status": "intermediate",
+					"unit": "mutations-per-megabase"
+				}
+			}
+		},
+		"non-human-content": {}
+	}
+}
