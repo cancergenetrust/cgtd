@@ -12,10 +12,16 @@ with open(args.file) as f:
     submission = json.loads(f.read())
 submission["clinical"]["CGT Public ID"] = submission["patientId"]
 
-r = requests.post("http://localhost:5000/v0/submissions?publish=true",
-                  files=[("files[]",
-                          ("foundationone.json",
-                           json.dumps(submission["genomic"], sort_keys=True)))],
-                  data=submission["clinical"])
+if submission["genomic"]:
+    print("Submitting clinical and genomic data")
+    r = requests.post("http://localhost:5000/v0/submissions?publish=true",
+                      files=[("files[]",
+                              ("foundationone.json",
+                               json.dumps(submission["genomic"], sort_keys=True)))],
+                      data=submission["clinical"])
+else:
+    print("No genomic data, submitting only clinical")
+    r = requests.post("http://localhost:5000/v0/submissions?publish=true",
+                      data=submission["clinical"])
 print(r.text)
 assert(r.status_code == requests.codes.ok)
