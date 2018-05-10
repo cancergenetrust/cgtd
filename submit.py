@@ -3,25 +3,25 @@ import requests
 import argparse
 
 parser = argparse.ArgumentParser(
-    description="Upload submission from submit.cancergenetrust.org")
-parser.add_argument('file', nargs='?', default="submission.json",
-                    help="Path to json file to submit")
+    description="Upload multiple files to cgtd")
+parser.add_argument('--fields', required=True,
+                    help="Path to json file with fields")
+parser.add_argument('--file', nargs=2, action='append',
+                    metavar=('name', 'path'),
+                    help="Name and path to file to submit")
 args = parser.parse_args()
 
-with open(args.file) as f:
-    submission = json.loads(f.read())
-submission["clinical"]["CGT Public ID"] = submission["patientId"]
+with open(args.fields) as f:
+    fields = json.loads(f.read())
 
-if submission["genomic"]:
-    print("Submitting clinical and genomic data")
+if args.file:
+    print("Submitting fields and files")
+    files = [("files[]", (f[0], open(f[1], "rb"))) for f in args.file]
     r = requests.post("http://localhost:5000/v0/submissions?publish=true",
-                      files=[("files[]",
-                              ("foundationone.json",
-                               json.dumps(submission["genomic"], sort_keys=True)))],
-                      data=submission["clinical"])
+                      files=files, data=fields)
 else:
-    print("No genomic data, submitting only clinical")
+    print("No files, submitting only fields")
     r = requests.post("http://localhost:5000/v0/submissions?publish=true",
-                      data=submission["clinical"])
+                      data=fields)
 print(r.text)
 assert(r.status_code == requests.codes.ok)
