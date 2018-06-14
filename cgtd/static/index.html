@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <title>Cancer Gene Trust</title>
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
@@ -96,7 +96,7 @@
     <div id="submission"></div>
 
     <script type="text/html" id="submission-template">
-			<div class="panel panel-default">
+			<div class="panel panel-default pre-scrollable">
 				<div class="panel-heading">
 					<h3 class="panel-title">Files</h3>
 				</div>
@@ -106,9 +106,15 @@
           <a class="font-weight-bold m-r-8" href="/ipfs/<%= file.multihash %>"><%= file.name %></a>
 					<% if (file.name.endsWith('.vcf')) { %>
           &nbsp;
-          <a class="font-weight-bold m-r-8"
-          href="http://genome.ucsc.edu/cgi-bin/hgTracks?hgt.customText=http://<%=
+          <a class="font-weight-bold m-r-8" target="_blank"
+          href="http://genome.ucsc.edu/cgi-bin/hgTracks?hgt.customText=https://<%=
           window.location.host + '/ipfs/' + file.multihash %>">View In Browser</a>
+					<% } %>
+					<% if (file.name.endsWith('.dcm')) { %>
+          &nbsp;
+          <a class="font-weight-bold m-r-8" target="_blank"
+          href="https://ivmartel.github.io/dwv-jqmobile/demo/stable/index.html?input=<%=
+          encodeURIComponent('https://' + window.location.host + '/ipfs/' + file.multihash) %>">View</a>
 					<% } %>
           </h4></li>
         <% }) %>

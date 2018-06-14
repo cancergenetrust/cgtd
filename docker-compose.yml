@@ -5,7 +5,7 @@ volumes:
 
 services:
   ipfs:
-    image: ipfs/go-ipfs:v0.4.10
+    image: ipfs/go-ipfs:v0.4.15
     volumes:
       - ipfs:/data/ipfs
     ports:

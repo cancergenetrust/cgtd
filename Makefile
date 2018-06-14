@@ -37,3 +37,11 @@ submit:
 	docker exec -it cgtd_cgtd_1 curl -X POST localhost:5000/v0/submissions \
         -F "a_field_name=a_field_value" \
         -F files[]=@tests/ALL/SSM-PAKMVD-09A-01D.vcf
+
+zero:
+	# Submit a single submission confirming to <id>/<#>/fields.json + files/
+	docker exec -it cgtd_cgtd_1 python submit.py \
+		--fields submissions/$(ID)/0/fields.json \
+    --files `find submissions/$(ID)/0/files -type f`
+
+    # --files `find submissions/db2d85aa-4f94-4e77-8755-6b94a710c1aa/files -type f -name '*.dcm'`
