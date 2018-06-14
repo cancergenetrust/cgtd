@@ -1,0 +1,38 @@
+version: "2"
+
+volumes:
+  ipfs:
+      driver_opts:
+        type: none
+        device: /mnt/ipfs_ucsf
+        o: bind
+
+services:
+  ipfs:
+    image: ipfs/go-ipfs:v0.4.15
+    volumes:
+      - ipfs:/data/ipfs
+    ports:
+      - "8080:8080"
+      - "4001:4001"
+
+  cgtd:
+    image: cancergenetrust/cgtd
+    ports:
+      - "5000:5000"
+    environment:
+      VIRTUAL_HOST: ucsf.edu.cancergenetrust.org
+      LETSENCRYPT_HOST: ucsf.edu.cancergenetrust.org
+    links:
+      - ipfs
+
+    # Build and run out of local directory with auto-reload
+    build: .
+    volumes:
+      - .:/app
+    command: --touch-reload=/app/cgtd/cgtd.py --processes=1 --threads=1
+
+networks:
+  default:
+    external:
+      name: search_default
