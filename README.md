@@ -1,3 +1,5 @@
+Deprecation Notice: This daemon and its use of IPNS has been depricated in favor of blockchain addresses managed by a contract and DApp
+
 [![Build Status](https://travis-ci.org/ga4gh/cgtd.svg?branch=master)](https://travis-ci.org/ga4gh/cgtd)
 
 # The Cancer Gene Trust
